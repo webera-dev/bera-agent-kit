@@ -1,8 +1,8 @@
 import {Address, parseUnits} from 'viem';
-import { createViemPublicClient } from '../viem/createViemPublicClient';
+import { createViemPublicClient } from '../utils/createViemPublicClient';
 import { ToolConfig } from './allTools.js';
 import { parseEther } from 'viem/utils';
-import {createViemWalletClient} from "../viem/createViemWalletClient";
+import {createViemWalletClient} from "../utils/createViemWalletClient";
 import {TokenABI} from "../constants/tokenABI";
 
 interface TransferArgs {
