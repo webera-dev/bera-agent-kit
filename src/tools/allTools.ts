@@ -1,4 +1,5 @@
 import { getBalanceTool } from "./getBalance";
+import {transferTool} from "./transfer";
 
 export interface ToolConfig<T = any> {
     definition: {
@@ -19,4 +20,5 @@ export interface ToolConfig<T = any> {
 export const tools: Record<string, ToolConfig> = {
     // add more tools here
     get_balance: getBalanceTool,
+    transfer: transferTool,
 };

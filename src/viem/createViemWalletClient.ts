@@ -1,7 +1,5 @@
-import { createWalletClient, http } from "viem";
+import {createWalletClient, http, publicActions} from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-// import { abstractTestnet } from "viem/chains";
-import { eip712WalletActions } from "viem/zksync";
 import { berachainTestnetbArtio } from "viem/chains";
 
 export function createViemWalletClient() {
@@ -15,5 +13,5 @@ export function createViemWalletClient() {
         account,
         chain: berachainTestnetbArtio,
         transport: http(),
-    }).extend(eip712WalletActions());
+    }).extend(publicActions);
 }
