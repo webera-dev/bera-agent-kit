@@ -3,6 +3,7 @@ import { transferTool } from "./common/transfer";
 import { kodiakSwapTool } from "./kodiak/kodiakSwap";
 import { bexSwapTool } from "./bex/bexSwap";
 import { oogaBoogaSwapTool } from "./oogaBooga/oogaBoogaSwap";
+import {bgtStationStakeTool} from "./bgtStation/bgtStationStake";
 
 export interface ToolConfig<T = any> {
   definition: {
@@ -27,4 +28,5 @@ export const tools: Record<string, ToolConfig> = {
   kodiak_swap: kodiakSwapTool,
   bex_swap: bexSwapTool,
   ooga_booga_swap: oogaBoogaSwapTool,
+  bgt_station_stake: bgtStationStakeTool,
 };

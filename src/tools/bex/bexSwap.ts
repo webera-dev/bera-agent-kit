@@ -3,7 +3,6 @@ import { Address, parseUnits } from "viem";
 import { ToolConfig } from "../allTools.js";
 import { BeraCrocMultiSwapABI } from "../../constants/bexABI";
 import { CONTRACT, TOKEN } from "../../constants";
-import { TokenABI } from "../../constants/tokenABI";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import {
   checkAndApproveAllowance,
@@ -62,7 +61,7 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
       await checkAndApproveAllowance(
         walletClient,
         args.base,
-        CONTRACT.BEXRouter,
+        CONTRACT.BeraCrocMultiSwap,
         parsedAmount,
       );
 
@@ -91,7 +90,7 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
       const parsedMinOut = BigInt(0); //TODO: calculate min out
 
       const tx = await walletClient.writeContract({
-        address: CONTRACT.BEXRouter,
+        address: CONTRACT.BeraCrocMultiSwap,
         abi: BeraCrocMultiSwapABI,
         functionName: "multiSwap",
         args: [steps, parsedAmount, parsedMinOut],
