@@ -2,6 +2,7 @@ import { getBalanceTool } from "./common/getBalance";
 import { transferTool } from "./common/transfer";
 import { kodiakSwapTool } from "./kodiak/kodiakSwap";
 import { bexSwapTool } from "./bex/bexSwap";
+import { oogaBoogaSwapTool } from "./oogaBooga/oogaBoogaSwap";
 
 export interface ToolConfig<T = any> {
   definition: {
@@ -25,4 +26,5 @@ export const tools: Record<string, ToolConfig> = {
   transfer: transferTool,
   kodiak_swap: kodiakSwapTool,
   bex_swap: bexSwapTool,
+  ooga_booga_swap: oogaBoogaSwapTool,
 };

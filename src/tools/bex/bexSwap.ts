@@ -5,6 +5,10 @@ import { BeraCrocMultiSwapABI } from "../../constants/bexABI";
 import { CONTRACT, TOKEN } from "../../constants";
 import { TokenABI } from "../../constants/tokenABI";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
+import {
+  checkAndApproveAllowance,
+  fetchTokenDecimalsAndParseAmount,
+} from "../../utils/helpers";
 
 interface BexSwapArgs {
   base: Address;
@@ -47,60 +51,23 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
 
       console.log(`[INFO] Fetching token decimals for ${args.base}`);
 
-      const tokenDecimals = await walletClient.readContract({
-        address: args.base,
-        abi: TokenABI,
-        functionName: "decimals",
-        args: [],
-      });
-
-      console.log(`[INFO] Decimals for ${args.base}: ${tokenDecimals}`);
-
-      const parsedAmount = parseUnits(args.amount.toString(), tokenDecimals);
-      console.log(
-        `[INFO] Converted amount: ${parsedAmount} (${args.amount} ${args.base})`,
+      const parsedAmount = await fetchTokenDecimalsAndParseAmount(
+        walletClient,
+        args.base,
+        args.amount,
       );
 
       console.log(`[INFO] Checking allowance for ${args.base}`);
 
-      // Check allowance
-      const allowance = await walletClient.readContract({
-        address: args.base,
-        abi: TokenABI,
-        functionName: "allowance",
-        args: [walletClient.account.address, CONTRACT.BEXRouter],
-      });
-
-      console.log(`[INFO] Current allowance: ${allowance}`);
-
-      if (BigInt(allowance) < parsedAmount) {
-        console.log(
-          `[INFO] Allowance insufficient. Approving ${parsedAmount} for ${CONTRACT.BEXRouter}`,
-        );
-
-        // Approve the required amount
-        const approvalTx = await walletClient.writeContract({
-          address: args.base,
-          abi: TokenABI,
-          functionName: "approve",
-          args: [CONTRACT.BEXRouter, parsedAmount],
-        });
-
-        const approvalReceipt = await walletClient.waitForTransactionReceipt({
-          hash: approvalTx as `0x${string}`,
-        });
-
-        if (approvalReceipt.status !== "success") {
-          throw new Error("Approval transaction failed");
-        }
-
-        console.log(`[INFO] Approval successful`);
-      } else {
-        console.log(`[INFO] Sufficient allowance available`);
-      }
+      await checkAndApproveAllowance(
+        walletClient,
+        args.base,
+        CONTRACT.BEXRouter,
+        parsedAmount,
+      );
 
       // Fetch swap route
-      const routeApiUrl = `https://bartio-bex-router.berachain.com/dex/route?fromAsset=${args.base}&toAsset=${args.quote}&amount=${parsedAmount.toString()}`;
+      const routeApiUrl = `?fromAsset=${args.base}&toAsset=${args.quote}&amount=${parsedAmount.toString()}`;
       const response = await axios.get(routeApiUrl);
 
       console.log(`[INFO] request route: ${routeApiUrl}`);
