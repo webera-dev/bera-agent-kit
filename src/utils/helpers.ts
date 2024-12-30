@@ -1,5 +1,7 @@
 import { Address, parseUnits } from "viem";
 import { TokenABI } from "../constants/tokenABI";
+import axios from "axios";
+import { URL } from "../constants";
 
 export const fetchTokenDecimalsAndParseAmount = async (
   walletClient: any,
@@ -60,5 +62,41 @@ export const checkAndApproveAllowance = async (
     console.log(`[INFO] Approval successful`);
   } else {
     console.log(`[INFO] Sufficient allowance available`);
+  }
+};
+
+export const fetchVaultAndTokenAddress = async (
+  token: Address,
+  isVault: boolean,
+): Promise<{ vaultAddress: Address; stakingTokenAddress: Address }> => {
+  try {
+    console.log(`[INFO] Fetching vaults data...`);
+    const response = await axios.get(URL.BGTVaultURL);
+    const vaults = response.data.vaults;
+
+    for (const vault of vaults) {
+      if (isVault && vault.vaultAddress === token) {
+        console.log(`[INFO] Found matching vault: ${vault.vaultAddress}`);
+        return {
+          vaultAddress: vault.vaultAddress as Address,
+          stakingTokenAddress: vault.stakingTokenAddress as Address,
+        };
+      } else if (!isVault && vault.stakingTokenAddress === token) {
+        console.log(
+          `[INFO] Found matching staking token: ${vault.stakingTokenAddress}`,
+        );
+        return {
+          vaultAddress: vault.vaultAddress as Address,
+          stakingTokenAddress: vault.stakingTokenAddress as Address,
+        };
+      }
+    }
+
+    throw new Error(
+      `No matching ${isVault ? "staking token" : "vault"} address found for ${token}`,
+    );
+  } catch (error: any) {
+    console.error("[ERROR] Failed to fetch addresses:", error.message);
+    throw error;
   }
 };

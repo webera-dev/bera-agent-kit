@@ -1,12 +1,10 @@
 import { Address, parseUnits } from "viem";
 import { ToolConfig } from "../allTools.js";
-import axios from "axios";
-import { URL, CONTRACT } from "../../constants";
-import { TokenABI } from "../../constants/tokenABI";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
+  fetchVaultAndTokenAddress,
 } from "../../utils/helpers";
 import { BerachainRewardsVaultABI } from "../../constants/bgtStationABI";
 
@@ -15,31 +13,6 @@ interface BGTStationStakeArgs {
   vault?: Address;
   amount: number;
 }
-
-export const getVaultOrTokenAddress = async (
-  token: Address,
-  isVault: boolean,
-): Promise<Address> => {
-  try {
-    const response = await axios.get(URL.BGTVaultURL);
-    const vaults = response.data.vaults;
-
-    for (const vault of vaults) {
-      if (isVault && vault.vaultAddress === token) {
-        return vault.stakingTokenAddress as Address;
-      } else if (!isVault && vault.stakingTokenAddress === token) {
-        return vault.vaultAddress as Address;
-      }
-    }
-
-    throw new Error(
-      `No matching ${isVault ? "staking token" : "vault"} address found for ${token}`,
-    );
-  } catch (error: any) {
-    console.error("[ERROR] Failed to fetch address:", error.message);
-    throw error;
-  }
-};
 
 export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
   definition: {
@@ -78,29 +51,27 @@ export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
 
       const walletClient = createViemWalletClient();
 
-      console.log("[INFO] Detecting vault or token address...");
       const primaryAddress = args.token || args.vault;
       const isVault = !!args.vault;
 
-      const resolvedAddress = await getVaultOrTokenAddress(
-        primaryAddress!,
-        isVault,
+      console.log("[INFO] Detecting vault or token address...");
+      const { vaultAddress, stakingTokenAddress } =
+        await fetchVaultAndTokenAddress(primaryAddress!, isVault);
+      console.log(`[INFO] Resolved Vault Address: ${vaultAddress}`);
+      console.log(
+        `[INFO] Resolved Staking Token Address: ${stakingTokenAddress}`,
       );
-      console.log(`[INFO] Resolved Address: ${resolvedAddress}`);
-
-      const tokenAddress = isVault ? resolvedAddress : args.token!;
-      const vaultAddress = isVault ? args.vault! : resolvedAddress;
 
       const parsedAmount = await fetchTokenDecimalsAndParseAmount(
         walletClient,
-        tokenAddress,
+        stakingTokenAddress,
         args.amount,
       );
 
       console.log("[INFO] Checking allowance...");
       await checkAndApproveAllowance(
         walletClient,
-        tokenAddress,
+        stakingTokenAddress,
         vaultAddress,
         parsedAmount,
       );
