@@ -17,7 +17,7 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
     type: "function",
     function: {
       name: "bex_swap",
-      description: "Perform a token swap on BeraCrocMultiSwap",
+      description: "Perform a token swap on BEX",
       parameters: {
         type: "object",
         properties: {
@@ -41,6 +41,7 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
     },
   },
   handler: async (args) => {
+    // TODO: Detect the "native token" automatically so that users do not need to provide the BERA address.
     try {
       const walletClient = createViemWalletClient();
 
@@ -60,9 +61,49 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
         `[INFO] Converted amount: ${parsedAmount} (${args.amount} ${args.base})`,
       );
 
+      console.log(`[INFO] Checking allowance for ${args.base}`);
+
+      // Check allowance
+      const allowance = await walletClient.readContract({
+        address: args.base,
+        abi: TokenABI,
+        functionName: "allowance",
+        args: [walletClient.account.address, CONTRACT.BEXRouter],
+      });
+
+      console.log(`[INFO] Current allowance: ${allowance}`);
+
+      if (BigInt(allowance) < parsedAmount) {
+        console.log(
+          `[INFO] Allowance insufficient. Approving ${parsedAmount} for ${CONTRACT.BEXRouter}`,
+        );
+
+        // Approve the required amount
+        const approvalTx = await walletClient.writeContract({
+          address: args.base,
+          abi: TokenABI,
+          functionName: "approve",
+          args: [CONTRACT.BEXRouter, parsedAmount],
+        });
+
+        const approvalReceipt = await walletClient.waitForTransactionReceipt({
+          hash: approvalTx as `0x${string}`,
+        });
+
+        if (approvalReceipt.status !== "success") {
+          throw new Error("Approval transaction failed");
+        }
+
+        console.log(`[INFO] Approval successful`);
+      } else {
+        console.log(`[INFO] Sufficient allowance available`);
+      }
+
+      // Fetch swap route
       const routeApiUrl = `https://bartio-bex-router.berachain.com/dex/route?fromAsset=${args.base}&toAsset=${args.quote}&amount=${parsedAmount.toString()}`;
       const response = await axios.get(routeApiUrl);
 
+      console.log(`[INFO] request route: ${routeApiUrl}`);
       if (response.status !== 200 || !response.data) {
         throw new Error(`Failed to fetch swap steps from API`);
       }

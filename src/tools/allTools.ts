@@ -1,7 +1,7 @@
 import { getBalanceTool } from "./common/getBalance";
 import { transferTool } from "./common/transfer";
 import { kodiakSwapTool } from "./kodiak/kodiakSwap";
-import {bexSwapTool} from "./bex/bexSwap";
+import { bexSwapTool } from "./bex/bexSwap";
 
 export interface ToolConfig<T = any> {
   definition: {
