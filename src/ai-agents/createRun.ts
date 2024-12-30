@@ -1,6 +1,6 @@
 import OpenAI from "openai";
-import { Run } from "openai/resources/beta/threads/runs/runs";
-import { Thread } from "openai/resources/beta/threads/threads";
+import { Run } from "openai/resources/beta/threads/runs";
+import { Thread } from "openai/resources/beta/threads";
 
 /**
  * The createRun function is used to create and execute a run (a task or operation) for a specific thread in OpenAI’s Beta Threads API.
