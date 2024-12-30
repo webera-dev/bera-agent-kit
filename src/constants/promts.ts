@@ -19,6 +19,7 @@ You have access to these tools:
 - "get_balance": Check the balance of any wallet address
 - "transfer": Transfer native currency or ERC20 tokens to a recipient
 - "kodiak_swap": Perform a token swap on Kodiak
+- "bex_swap": Perform a token swap on BEX
 
 Your workflow for contract interactions should be:
 - After any transaction is sent, ALWAYS to check its status and provide the user with the transaction hash.
