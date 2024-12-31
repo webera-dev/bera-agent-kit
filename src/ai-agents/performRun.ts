@@ -3,11 +3,20 @@ import { Thread } from "openai/resources/beta/threads";
 import { Run } from "openai/resources/beta/threads/runs";
 import { handleRunToolCalls } from "./handleRunToolCalls";
 
+// Helper function to log with elapsed time
+function logWithTime(message: string, startTime: number) {
+  const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1); // Calculate elapsed time in seconds
+  console.log(`[INFO] ${message} - ${elapsedSeconds}s`);
+}
+
 export async function performRun(run: Run, client: OpenAI, thread: Thread) {
-  console.log(`[INFO] Performing run ${run.id}`);
+  const overallStartTime = Date.now();
+  logWithTime(`Performing run ${run.id}`, overallStartTime);
 
   while (run.status === "requires_action") {
+    const startTime = Date.now();
     run = await handleRunToolCalls(run, client, thread);
+    logWithTime(`Completed action for run ${run.id}`, startTime);
   }
 
   if (run.status === "failed") {
@@ -17,6 +26,7 @@ export async function performRun(run: Run, client: OpenAI, thread: Thread) {
       role: "assistant",
       content: errorMessage,
     });
+    logWithTime(`Run ${run.id} failed`, overallStartTime);
     return {
       type: "text",
       text: {
@@ -31,7 +41,7 @@ export async function performRun(run: Run, client: OpenAI, thread: Thread) {
     (message) => message.role === "assistant",
   );
 
-  console.log(`[INFO] Assistant message: ${assistantMessage?.content[0]}`);
+  logWithTime(`Assistant message: ${assistantMessage?.content[0]}`, overallStartTime);
 
   return (
     assistantMessage?.content[0] || {

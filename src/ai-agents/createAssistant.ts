@@ -11,6 +11,7 @@ import { promts } from "../constants/promts";
 export async function createAssistant(client: OpenAI): Promise<Assistant> {
   return await client.beta.assistants.create({
     model: "gpt-4o-mini",
+    temperature: 0.3,
     name: "My Assistant",
     instructions: promts,
     tools: Object.values(tools).map((tool) => tool.definition),
