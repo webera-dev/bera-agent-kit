@@ -20,3 +20,4 @@ contributors, the general procedure for contributing has been established:
       make a comment on the issue to inform the community of your intentions
       to begin work.
 5. To submit your work as a contribution to the repository follow standard GitHub best practices. Please open a pull request!
+6. Checkout [src](./src/README.md) and [test](./test/README.md) to learn folder structure
