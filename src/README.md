@@ -6,10 +6,10 @@ Welcome to the source code directory of the Bera Agent Kit. This folder contains
 
 The `src` directory is organized into several subdirectories, each responsible for different aspects of the Bera Agent Kit:
 
-1. [ai-agents](./ai-agents/README.md): This directory contains the core AI agent functionality. It includes code for creating, handling, and performing runs with AI agents.
-2. [constants](./constants/README.md): Here you'll find constant values used throughout the project, including ABI files for different contracts and prompt templates.
-3. [tools](./tools/README.md): This directory houses various project interactions used by the AI agents. Each project has its own subdirectory with specific implementations.
-4. [utils](./utils/README.md): Utility functions and helper files that support the main functionality of the Bera Agent Kit are located here.
+1. `ai-agents`: This directory contains the core AI agent functionality. It includes code for creating, handling, and performing runs with AI agents.
+2. `constants`: Here you'll find constant values used throughout the project, including ABI files for different contracts and prompt templates.
+3. `tools`: This directory houses various project interactions used by the AI agents. Each project has its own subdirectory with specific implementations.
+4. `utils`: Utility functions and helper files that support the main functionality of the Bera Agent Kit are located here.
 
 ## Key Files
 
