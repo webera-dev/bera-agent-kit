@@ -2,7 +2,7 @@ import axios from "axios";
 import { Address, parseUnits } from "viem";
 import { ToolConfig } from "../allTools.js";
 import { BeraCrocMultiSwapABI } from "../../constants/bexABI";
-import { CONTRACT, TOKEN } from "../../constants";
+import { CONTRACT, TOKEN, URL } from "../../constants";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import {
   checkAndApproveAllowance,
@@ -48,8 +48,6 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
     try {
       const walletClient = createViemWalletClient();
 
-      console.log(`[INFO] Fetching token decimals for ${args.base}`);
-
       const parsedAmount = await fetchTokenDecimalsAndParseAmount(
         walletClient,
         args.base,
@@ -66,10 +64,10 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
       );
 
       // Fetch swap route
-      const routeApiUrl = `?fromAsset=${args.base}&toAsset=${args.quote}&amount=${parsedAmount.toString()}`;
+      const routeApiUrl = `${URL.BEXRouteURL}?fromAsset=${args.base}&toAsset=${args.quote}&amount=${parsedAmount.toString()}`;
+      console.log(`[INFO] request route: ${routeApiUrl}`);
       const response = await axios.get(routeApiUrl);
 
-      console.log(`[INFO] request route: ${routeApiUrl}`);
       if (response.status !== 200 || !response.data) {
         throw new Error(`Failed to fetch swap steps from API`);
       }
