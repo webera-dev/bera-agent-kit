@@ -8,6 +8,7 @@ import {
 } from "../../constants/kodiakABI";
 import { TokenABI } from "../../constants/tokenABI";
 import { CONTRACT, TOKEN } from "../../constants";
+import { checkAndApproveAllowance } from "../../utils/helpers";
 
 // TODO: In the futures, we should detect tokenIn by token name or symbol. So that user can easy to use
 interface KodiakSwapArgs {
@@ -103,20 +104,12 @@ export const kodiakSwapTool: ToolConfig<KodiakSwapArgs> = {
           Number(inputTokenDecimals),
         );
 
-        const approvalTx = await walletClient.writeContract({
-          address: args.tokenIn!,
-          abi: TokenABI,
-          functionName: "approve",
-          args: [CONTRACT.KodiakSwapRouter02, parsedAmountIn],
-        });
-
-        const approvalReceipt = await walletClient.waitForTransactionReceipt({
-          hash: approvalTx as `0x${string}`,
-        });
-
-        if (approvalReceipt.status !== "success") {
-          throw new Error("Approval transaction failed");
-        }
+        await checkAndApproveAllowance(
+          walletClient,
+          args.tokenIn!,
+          CONTRACT.KodiakSwapRouter02,
+          parsedAmountIn,
+        );
 
         tx = await walletClient.writeContract({
           address: CONTRACT.KodiakSwapRouter02,

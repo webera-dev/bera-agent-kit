@@ -41,7 +41,10 @@ export async function performRun(run: Run, client: OpenAI, thread: Thread) {
     (message) => message.role === "assistant",
   );
 
-  logWithTime(`Assistant message: ${assistantMessage?.content[0]}`, overallStartTime);
+  logWithTime(
+    `Assistant message: ${assistantMessage?.content[0]}`,
+    overallStartTime,
+  );
 
   return (
     assistantMessage?.content[0] || {
