@@ -3,18 +3,25 @@ import { TokenABI } from "../constants/tokenABI";
 import axios from "axios";
 import { URL } from "../constants";
 
+const tokenDecimalsCache: Map<string, number> = new Map();
+
 export const fetchTokenDecimalsAndParseAmount = async (
   walletClient: any,
   token: Address,
   amount: number,
 ): Promise<bigint> => {
-  console.log(`[INFO] Fetching token decimals for ${token}`);
-  const tokenDecimals = await walletClient.readContract({
-    address: token,
-    abi: TokenABI,
-    functionName: "decimals",
-    args: [],
-  });
+  if (!tokenDecimalsCache.has(token)) {
+    console.log(`[INFO] Fetching token decimals for ${token}`);
+    const tokenDecimals = await walletClient.readContract({
+      address: token,
+      abi: TokenABI,
+      functionName: "decimals",
+      args: [],
+    });
+    tokenDecimalsCache.set(token, Number(tokenDecimals));
+  }
+
+  const tokenDecimals = tokenDecimalsCache.get(token)!;
   const parsedAmount = parseUnits(amount.toString(), tokenDecimals);
   console.log(`[INFO] Parsed amount: ${parsedAmount.toString()} units`);
   return parsedAmount;
