@@ -5,7 +5,8 @@
   "repository": "https://github.com/Webera-Finance/bera-agent-kit",
   "scripts": {
     "build": "tsc",
-    "test": "ts-node test/index.ts",
+    "test": "npx mocha -r ts-node/register 'test/**/*.spec.ts'",
+    "test:file": "npx mocha -r ts-node/register",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -14,16 +15,22 @@
   },
   "dependencies": {
     "axios": "^1.7.9",
+    "chai": "^4.3.7",
     "dotenv": "^16.4.7",
     "langsmith": "^0.2.14",
+    "mocha": "^11.0.1",
     "node-fetch": "^3.3.2",
     "openai": "^4.73.1",
+    "sinon": "^19.0.2",
     "typedoc": "^0.27.6",
     "viem": "^2.21.57"
   },
   "devDependencies": {
     "@types/axios": "^0.14.4",
+    "@types/chai": "^5.0.1",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",
+    "@types/sinon": "^17.0.3",
     "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
