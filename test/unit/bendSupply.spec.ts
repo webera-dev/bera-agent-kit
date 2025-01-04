@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { bendSupplyTool } from "../../src/tools/royco/bendSupply";
+import { bendSupplyTool } from "../../src/tools/bend/bendSupply";
 import * as viemClientModule from "../../src/utils/createViemWalletClient";
 import * as helpersModule from "../../src/utils/helpers";
 import { parseEther } from "viem";

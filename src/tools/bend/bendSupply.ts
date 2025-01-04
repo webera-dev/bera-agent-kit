@@ -1,7 +1,7 @@
 import { Address } from "viem";
-import { ToolConfig } from "../allTools.js";
+import { ToolConfig } from "../allTools";
 import { BEND_ABI } from "../../constants/bendABI";
-import { CONTRACT } from "../../constants";
+import { CONTRACT } from "../../constants/index";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import {
   checkAndApproveAllowance,

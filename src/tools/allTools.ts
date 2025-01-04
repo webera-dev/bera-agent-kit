@@ -5,7 +5,7 @@ import { bexSwapTool } from "./bex/bexSwap";
 import { oogaBoogaSwapTool } from "./oogaBooga/oogaBoogaSwap";
 import { bgtStationStakeTool } from "./bgtStation/bgtStationStake";
 import { bgtStationClaimRewardTool } from "./bgtStation/bgtStationClaimBGT";
-import { bendSupplyTool } from "./royco/bendSupply";
+import { bendSupplyTool } from "./bend/bendSupply";
 
 export interface ToolConfig<T = any> {
   definition: {
