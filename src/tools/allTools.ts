@@ -6,6 +6,9 @@ import { oogaBoogaSwapTool } from "./oogaBooga/oogaBoogaSwap";
 import { bgtStationStakeTool } from "./bgtStation/bgtStationStake";
 import { bgtStationClaimRewardTool } from "./bgtStation/bgtStationClaimBGT";
 import { bendSupplyTool } from "./bend/bendSupply";
+import { bendWithdrawTool } from "./bend/bendWithdraw";
+import { bendBorrowTool } from "./bend/bendBorrow";
+import { bendRepayTool } from "./bend/bendRepay";
 import { bgtStationDelegateTool } from "./bgtStation/bgtStationDelegateBGT";
 import { bgtStationRedeemTool } from "./bgtStation/bgtStationRedeem";
 
@@ -35,6 +38,9 @@ export const tools: Record<string, ToolConfig> = {
   bgt_station_stake: bgtStationStakeTool,
   bgt_station_claim_reward: bgtStationClaimRewardTool,
   bend_supply: bendSupplyTool,
+  bend_withdraw: bendWithdrawTool,
+  bend_borrow: bendBorrowTool,
+  bend_repay: bendRepayTool,
   bgt_station_delegate: bgtStationDelegateTool,
   bgt_station_redeem: bgtStationRedeemTool,
 };
