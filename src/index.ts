@@ -7,6 +7,7 @@ import { createRun } from "./ai-agents/createRun";
 import { performRun } from "./ai-agents/performRun";
 import { Thread } from "openai/resources/beta/threads";
 import { Assistant } from "openai/resources/beta/assistants";
+import { log } from "./utils/logger";
 
 // Initialize OpenAI client
 const openAIClient = new OpenAI();
@@ -27,14 +28,14 @@ function askQuestion(rl: readline.Interface, query: string): Promise<string> {
 // Handle chat conversation
 async function handleChat(thread: Thread, assistant: Assistant): Promise<void> {
   const rl = createReadlineInterface();
-  console.log('Chat started! Type "exit" to end the conversation.');
+  log.info('Chat started! Type "exit" to end the conversation.');
 
   try {
     while (true) {
       const userInput = await askQuestion(rl, "\nYou: ");
 
       if (userInput.trim().toLowerCase() === "exit") {
-        console.log("Exiting the chat...");
+        log.info("Exiting the chat...");
         break;
       }
 
@@ -48,10 +49,10 @@ async function handleChat(thread: Thread, assistant: Assistant): Promise<void> {
         const result = await performRun(run, openAIClient, thread);
 
         if (result?.type === "text") {
-          console.log("\nBeraBot:", result.text.value);
+          log.info("\nBeraBot:", result.text.value);
         }
       } catch (err) {
-        console.error(
+        log.error(
           "Error during message processing:",
           err instanceof Error ? err.message : "Unknown error",
         );
@@ -65,13 +66,13 @@ async function handleChat(thread: Thread, assistant: Assistant): Promise<void> {
 // Main function to initialize resources and start the chat
 async function main(): Promise<void> {
   try {
-    console.log("Initializing resources...");
+    log.info("Initializing resources...");
     const assistant = await createAssistant(openAIClient);
     const thread = await createThread(openAIClient);
 
     await handleChat(thread, assistant);
   } catch (err) {
-    console.error(
+    log.error(
       "Error initializing chat:",
       err instanceof Error ? err.message : "Unknown error",
     );
@@ -81,7 +82,7 @@ async function main(): Promise<void> {
 
 // Entry point
 main().catch((err) => {
-  console.error(
+  log.error(
     "Unhandled error:",
     err instanceof Error ? err.message : "Unknown error",
   );

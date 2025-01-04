@@ -3,6 +3,7 @@ import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { BGTABI } from "../../constants/tokenABI";
 import { TOKEN } from "../../constants";
 import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
+import { log } from "../../utils/logger.js";
 
 interface BGTStationRedeemArgs {
   receiver?: string; // Address of the receiver for redemption (optional)
@@ -44,14 +45,14 @@ export const bgtStationRedeemTool: ToolConfig<BGTStationRedeemArgs> = {
 
       const receiver = args.receiver || walletClient.account.address;
 
-      console.log("[INFO] Parsing amount based on token decimals...");
+      log.info("[INFO] Parsing amount based on token decimals...");
       const parsedAmount = await fetchTokenDecimalsAndParseAmount(
         walletClient,
         TOKEN.BGT,
         args.amount,
       );
 
-      console.log(`[INFO] Redeeming BGT to receiver: ${receiver}...`);
+      log.info(`[INFO] Redeeming BGT to receiver: ${receiver}...`);
       const redeemTx = await walletClient.writeContract({
         address: TOKEN.BGT,
         abi: BGTABI,
@@ -59,7 +60,7 @@ export const bgtStationRedeemTool: ToolConfig<BGTStationRedeemArgs> = {
         args: [receiver as `0x${string}`, parsedAmount],
       });
 
-      console.log("[INFO] Waiting for transaction receipt...");
+      log.info("[INFO] Waiting for transaction receipt...");
       const receipt = await walletClient.waitForTransactionReceipt({
         hash: redeemTx as `0x${string}`,
       });
@@ -68,13 +69,13 @@ export const bgtStationRedeemTool: ToolConfig<BGTStationRedeemArgs> = {
         throw new Error("Redemption transaction failed.");
       }
 
-      console.log(
+      log.info(
         "[INFO] Redemption successful. Transaction Hash:",
         receipt.transactionHash,
       );
       return receipt.transactionHash;
     } catch (error: any) {
-      console.error("[ERROR] Failed to redeem BGT:", error.message);
+      log.error("[ERROR] Failed to redeem BGT:", error.message);
       throw new Error(`Failed to redeem BGT: ${error.message}`);
     }
   },

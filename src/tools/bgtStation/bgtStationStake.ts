@@ -7,6 +7,7 @@ import {
   fetchVaultAndTokenAddress,
 } from "../../utils/helpers";
 import { BerachainRewardsVaultABI } from "../../constants/bgtStationABI";
+import { log } from "../../utils/logger.js";
 
 interface BGTStationStakeArgs {
   token?: Address;
@@ -54,13 +55,11 @@ export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
       const primaryAddress = args.token || args.vault;
       const isVault = !!args.vault;
 
-      console.log("[INFO] Detecting vault or token address...");
+      log.info("[INFO] Detecting vault or token address...");
       const { vaultAddress, stakingTokenAddress } =
         await fetchVaultAndTokenAddress(primaryAddress!, isVault);
-      console.log(`[INFO] Resolved Vault Address: ${vaultAddress}`);
-      console.log(
-        `[INFO] Resolved Staking Token Address: ${stakingTokenAddress}`,
-      );
+      log.info(`[INFO] Resolved Vault Address: ${vaultAddress}`);
+      log.info(`[INFO] Resolved Staking Token Address: ${stakingTokenAddress}`);
 
       const parsedAmount = await fetchTokenDecimalsAndParseAmount(
         walletClient,
@@ -68,7 +67,7 @@ export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
         args.amount,
       );
 
-      console.log("[INFO] Checking allowance...");
+      log.info("[INFO] Checking allowance...");
       await checkAndApproveAllowance(
         walletClient,
         stakingTokenAddress,
@@ -77,7 +76,7 @@ export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
       );
 
       // Stake the token into the vault
-      console.log("[INFO] Staking token into vault...");
+      log.info("[INFO] Staking token into vault...");
       const stakeTx = await walletClient.writeContract({
         address: vaultAddress,
         abi: BerachainRewardsVaultABI,
@@ -93,13 +92,13 @@ export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
         throw new Error("Stake transaction failed.");
       }
 
-      console.log(
+      log.info(
         "[INFO] Stake successful. Transaction Hash:",
         stakeReceipt.transactionHash,
       );
       return stakeReceipt.transactionHash;
     } catch (error: any) {
-      console.error("[ERROR]", error.message);
+      log.error("[ERROR]", error.message);
       throw error;
     }
   },
