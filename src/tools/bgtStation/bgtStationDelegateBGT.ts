@@ -37,16 +37,18 @@ export const bgtStationDelegateTool: ToolConfig<BGTStationDelegateArgs> = {
   handler: async (args) => {
     try {
       if (!args.validator || args.amount === undefined || args.amount <= 0) {
-        throw new Error("Validator address and a positive amount are required.");
+        throw new Error(
+          "Validator address and a positive amount are required.",
+        );
       }
 
       const walletClient = createViemWalletClient();
 
       console.log("[INFO] Parsing amount based on token decimals...");
       const parsedAmount = await fetchTokenDecimalsAndParseAmount(
-          walletClient,
-          TOKEN.BGT,
-          args.amount,
+        walletClient,
+        TOKEN.BGT,
+        args.amount,
       );
 
       console.log("[INFO] Delegating BGT using queueBoost...");
@@ -67,8 +69,8 @@ export const bgtStationDelegateTool: ToolConfig<BGTStationDelegateArgs> = {
       }
 
       console.log(
-          "[INFO] Delegation successful. Transaction Hash:",
-          receipt.transactionHash,
+        "[INFO] Delegation successful. Transaction Hash:",
+        receipt.transactionHash,
       );
       return receipt.transactionHash;
     } catch (error: any) {
