@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { bendSupplyTool } from "../../src/tools/bend/bendSupply";
+import { bendBorrowTool } from "../../src/tools/bend/bendBorrow";
 import * as viemClientModule from "../../src/utils/createViemWalletClient";
 import * as helpersModule from "../../src/utils/helpers";
 import { parseEther } from "viem";
@@ -14,7 +14,7 @@ const mockWalletClient = {
   writeContract: sinon.stub(),
 };
 
-describe("bendSupply Tool", () => {
+describe("bendBorrow Tool", () => {
   beforeEach(() => {
     mockWalletClient.writeContract.reset();
     sinon
@@ -23,9 +23,6 @@ describe("bendSupply Tool", () => {
     sinon
       .stub(helpersModule, "fetchTokenDecimalsAndParseAmount")
       .resolves(parseEther("100"));
-    sinon
-      .stub(helpersModule, "checkAndApproveAllowance")
-      .resolves() as sinon.SinonStub;
   });
 
   afterEach(() => {
@@ -33,21 +30,21 @@ describe("bendSupply Tool", () => {
   });
 
   it("should have correct function definition", () => {
-    expect(bendSupplyTool.definition.type).to.equal("function");
-    expect(bendSupplyTool.definition.function.name).to.equal("bend_supply");
+    expect(bendBorrowTool.definition.type).to.equal("function");
+    expect(bendBorrowTool.definition.function.name).to.equal("bend_borrow");
     expect(
-      bendSupplyTool.definition.function.parameters.required,
+      bendBorrowTool.definition.function.parameters.required,
     ).to.deep.equal(["asset", "amount"]);
   });
 
-  it("should successfully supply tokens to Bend", async () => {
+  it("should successfully borrow tokens from Bend with default interest rate", async () => {
     const testAsset = TOKEN.HONEY;
     const testAmount = 100;
     const mockTxHash = "0xmocktxhash";
 
     mockWalletClient.writeContract.resolves(mockTxHash);
 
-    const result = await bendSupplyTool.handler({
+    const result = await bendBorrowTool.handler({
       asset: testAsset,
       amount: testAmount,
     });
@@ -57,20 +54,56 @@ describe("bendSupply Tool", () => {
     expect(mockWalletClient.writeContract.firstCall.args[0]).to.deep.equal({
       address: CONTRACT.Bend,
       abi: BEND_ABI,
-      functionName: "supply",
-      args: [testAsset, parseEther("100"), mockWalletClient.account.address, 0],
+      functionName: "borrow",
+      args: [
+        testAsset,
+        parseEther("100"),
+        BigInt(2), // Default variable rate
+        0, // referralCode
+        mockWalletClient.account.address,
+      ],
     });
   });
 
-  it("should handle errors during supply", async () => {
+  it("should successfully borrow tokens with stable interest rate", async () => {
     const testAsset = TOKEN.HONEY;
     const testAmount = 100;
-    const errorMessage = "Supply failed";
+    const mockTxHash = "0xmocktxhash";
+    const stableRateMode = 1;
+
+    mockWalletClient.writeContract.resolves(mockTxHash);
+
+    const result = await bendBorrowTool.handler({
+      asset: testAsset,
+      amount: testAmount,
+      interestRateMode: stableRateMode,
+    });
+
+    expect(result).to.equal(mockTxHash);
+    expect(mockWalletClient.writeContract.calledOnce).to.be.true;
+    expect(mockWalletClient.writeContract.firstCall.args[0]).to.deep.equal({
+      address: CONTRACT.Bend,
+      abi: BEND_ABI,
+      functionName: "borrow",
+      args: [
+        testAsset,
+        parseEther("100"),
+        BigInt(stableRateMode),
+        0, // referralCode
+        mockWalletClient.account.address,
+      ],
+    });
+  });
+
+  it("should handle errors during borrow", async () => {
+    const testAsset = TOKEN.HONEY;
+    const testAmount = 100;
+    const errorMessage = "Borrow failed";
 
     mockWalletClient.writeContract.rejects(new Error(errorMessage));
 
     try {
-      await bendSupplyTool.handler({
+      await bendBorrowTool.handler({
         asset: testAsset,
         amount: testAmount,
       });
@@ -78,31 +111,5 @@ describe("bendSupply Tool", () => {
     } catch (error: any) {
       expect(error.message).to.include(errorMessage);
     }
-  });
-
-  it("should check and approve allowance before supply", async () => {
-    const testAsset = TOKEN.HONEY;
-    const testAmount = 100;
-    const mockTxHash = "0xmocktxhash";
-
-    mockWalletClient.writeContract.resolves(mockTxHash);
-
-    await bendSupplyTool.handler({
-      asset: testAsset,
-      amount: testAmount,
-    });
-
-    expect(
-      (helpersModule.checkAndApproveAllowance as sinon.SinonStub).calledOnce,
-    ).to.be.true;
-    expect(
-      (helpersModule.checkAndApproveAllowance as sinon.SinonStub).firstCall
-        .args,
-    ).to.deep.equal([
-      mockWalletClient,
-      testAsset,
-      CONTRACT.Bend,
-      parseEther("100"),
-    ]);
   });
 });
