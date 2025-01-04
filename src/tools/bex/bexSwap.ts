@@ -8,6 +8,7 @@ import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
 } from "../../utils/helpers";
+import { log } from "../../utils/logger.js";
 
 interface BexSwapArgs {
   base: Address;
@@ -54,7 +55,7 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
         args.amount,
       );
 
-      console.log(`[INFO] Checking allowance for ${args.base}`);
+      log.info(`[INFO] Checking allowance for ${args.base}`);
 
       await checkAndApproveAllowance(
         walletClient,
@@ -65,7 +66,7 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
 
       // Fetch swap route
       const routeApiUrl = `${URL.BEXRouteURL}?fromAsset=${args.base}&toAsset=${args.quote}&amount=${parsedAmount.toString()}`;
-      console.log(`[INFO] request route: ${routeApiUrl}`);
+      log.info(`[INFO] request route: ${routeApiUrl}`);
       const response = await axios.get(routeApiUrl);
 
       if (response.status !== 200 || !response.data) {
@@ -83,7 +84,7 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
         throw new Error(`No valid swap steps returned from the API`);
       }
 
-      console.log(`[INFO] Swap steps fetched:`, steps);
+      log.info(`[INFO] Swap steps fetched:`, steps);
 
       const parsedMinOut = BigInt(0); //TODO: calculate min out
 
@@ -107,10 +108,10 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
         );
       }
 
-      console.log(`[INFO] Swap successful: Transaction hash: ${tx}`);
+      log.info(`[INFO] Swap successful: Transaction hash: ${tx}`);
       return tx;
     } catch (error: any) {
-      console.error(`[ERROR] Swap failed: ${error.message}`);
+      log.error(`[ERROR] Swap failed: ${error.message}`);
       throw new Error(`Swap failed: ${error.message}`);
     }
   },

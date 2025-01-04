@@ -4,6 +4,7 @@ import { ToolConfig } from "../allTools.js";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { URL } from "../../constants";
 import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
+import { log } from "../../utils/logger.js";
 
 interface OogaBoogaSwapArgs {
   base: Address; // Token to swap from
@@ -18,7 +19,7 @@ const checkAndApproveAllowance = async (
   parsedAmount: bigint,
   headers: any,
 ): Promise<void> => {
-  console.log(`[INFO] Checking allowance for ${base}`);
+  log.info(`[INFO] Checking allowance for ${base}`);
   const allowanceResponse = await axios.get(
     `${URL.OogaBoogaURL}/v1/approve/allowance`,
     {
@@ -29,10 +30,10 @@ const checkAndApproveAllowance = async (
       },
     },
   );
-  console.log(`[DEBUG] Allowance API response:`, allowanceResponse.data);
+  log.info(`[DEBUG] Allowance API response:`, allowanceResponse.data);
 
   if (BigInt(allowanceResponse.data.allowance) < parsedAmount) {
-    console.log(`[INFO] Insufficient allowance. Approving ${parsedAmount}`);
+    log.info(`[INFO] Insufficient allowance. Approving ${parsedAmount}`);
     const approveResponse = await axios.get(`${URL.OogaBoogaURL}/v1/approve`, {
       headers,
       params: {
@@ -40,7 +41,7 @@ const checkAndApproveAllowance = async (
         amount: parsedAmount.toString(),
       },
     });
-    console.log(`[DEBUG] Approve API response:`, approveResponse.data);
+    log.info(`[DEBUG] Approve API response:`, approveResponse.data);
 
     const { tx } = approveResponse.data;
 
@@ -50,16 +51,16 @@ const checkAndApproveAllowance = async (
       data: tx.data as `0x${string}`,
     });
 
-    console.log(`[INFO] Sent approve transaction. Hash: ${hash}`);
+    log.info(`[INFO] Sent approve transaction. Hash: ${hash}`);
     const receipt = await walletClient.waitForTransactionReceipt({ hash });
 
-    console.log(`[DEBUG] Approval Receipt:`, receipt);
+    log.info(`[DEBUG] Approval Receipt:`, receipt);
     if (receipt.status !== "success") {
       throw new Error("Approval transaction failed");
     }
-    console.log("Approval complete", receipt.transactionHash, receipt.status);
+    log.info("Approval complete", receipt.transactionHash, receipt.status);
   } else {
-    console.log(`[INFO] Sufficient allowance available.`);
+    log.info(`[INFO] Sufficient allowance available.`);
   }
 };
 
@@ -72,7 +73,7 @@ const performSwap = async (
   headers: any,
 ): Promise<string> => {
   try {
-    console.log(`[INFO] Fetching swap details from OogaBooga API`);
+    log.info(`[INFO] Fetching swap details from OogaBooga API`);
     const swapResponse = await axios.get(`${URL.OogaBoogaURL}/v1/swap`, {
       headers,
       params: {
@@ -85,8 +86,8 @@ const performSwap = async (
     });
     const { tx: swapTx } = swapResponse.data;
 
-    console.log("Submitting swap transaction...");
-    console.log(`[DEBUG] swap transaction params:`);
+    log.info("Submitting swap transaction...");
+    log.info(`[DEBUG] swap transaction params:`);
     const swapHash = await walletClient.sendTransaction({
       account: walletClient.account.address,
       to: swapTx.to as Address,
@@ -94,19 +95,19 @@ const performSwap = async (
       value: swapTx.value ? BigInt(swapTx.value) : 0n,
     });
 
-    console.log(`[INFO] Sent swap transaction. Hash: ${swapHash}`);
+    log.info(`[INFO] Sent swap transaction. Hash: ${swapHash}`);
     const swapReceipt = await walletClient.waitForTransactionReceipt({
       hash: swapHash,
     });
 
-    console.log(`[DEBUG] Swap Receipt:`, swapReceipt);
+    log.info(`[DEBUG] Swap Receipt:`, swapReceipt);
     if (swapReceipt.status !== "success") {
       throw new Error("Swap transaction failed");
     }
-    console.log(`[INFO] Swap successful: Transaction hash: ${swapHash}`);
+    log.info(`[INFO] Swap successful: Transaction hash: ${swapHash}`);
     return swapHash;
   } catch (error: any) {
-    console.error(`[ERROR] Swap failed: ${error.message}`);
+    log.error(`[ERROR] Swap failed: ${error.message}`);
     throw new Error(`Swap failed: ${error.message}`);
   }
 };
@@ -153,7 +154,7 @@ export const oogaBoogaSwapTool: ToolConfig<OogaBoogaSwapArgs> = {
     const OOGA_BOOGA_API_KEY = process.env.OOGA_BOOGA_API_KEY;
     const headers = { Authorization: `Bearer ${OOGA_BOOGA_API_KEY}` };
 
-    console.log(
+    log.info(
       `[INFO] Starting OogaBooga Swap for ${args.amount} of ${args.base} to ${args.quote}`,
     );
 

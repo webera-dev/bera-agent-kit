@@ -3,6 +3,7 @@ import { ToolConfig } from "../allTools.js";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { fetchVaultAndTokenAddress } from "../../utils/helpers";
 import { BerachainRewardsVaultABI } from "../../constants/bgtStationABI";
+import { log } from "../../utils/logger.js";
 
 interface BGTStationClaimRewardArgs {
   token?: Address; // Staking token address (optional)
@@ -47,15 +48,15 @@ export const bgtStationClaimRewardTool: ToolConfig<BGTStationClaimRewardArgs> =
         const primaryAddress = args.token || args.vault;
         const isVault = !!args.vault;
 
-        console.log("[INFO] Detecting vault or token address...");
+        log.info("[INFO] Detecting vault or token address...");
         const { vaultAddress, stakingTokenAddress } =
           await fetchVaultAndTokenAddress(primaryAddress!, isVault);
-        console.log(`[INFO] Resolved Vault Address: ${vaultAddress}`);
-        console.log(
+        log.info(`[INFO] Resolved Vault Address: ${vaultAddress}`);
+        log.info(
           `[INFO] Resolved Staking Token Address: ${stakingTokenAddress}`,
         );
 
-        console.log("[INFO] Claiming rewards from the vault...");
+        log.info("[INFO] Claiming rewards from the vault...");
         const claimRewardTx = await walletClient.writeContract({
           address: vaultAddress,
           abi: BerachainRewardsVaultABI,
@@ -71,13 +72,13 @@ export const bgtStationClaimRewardTool: ToolConfig<BGTStationClaimRewardArgs> =
           throw new Error("Claim reward transaction failed.");
         }
 
-        console.log(
+        log.info(
           "[INFO] Claim reward successful. Transaction Hash:",
           receipt.transactionHash,
         );
         return receipt.transactionHash;
       } catch (error: any) {
-        console.error("[ERROR] Failed to claim rewards:", error.message);
+        log.error("[ERROR] Failed to claim rewards:", error.message);
         throw new Error(`Failed to claim rewards: ${error.message}`);
       }
     },

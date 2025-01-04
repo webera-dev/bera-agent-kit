@@ -4,6 +4,7 @@ import { ToolConfig } from "../allTools.js";
 import { parseEther } from "viem/utils";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { TokenABI } from "../../constants/tokenABI";
+import { log } from "../../utils/logger";
 
 interface TransferArgs {
   to: Address;
@@ -80,7 +81,7 @@ export const transferTool: ToolConfig<TransferArgs> = {
       }
       return tx;
     } catch (error: any) {
-      console.log(
+      log.error(
         `[INFO] Transfer ${amount} ${tokenAddress} to ${to} error: ${error.message}`,
       );
       throw new Error(`Transfer failed: ${error.message}`);

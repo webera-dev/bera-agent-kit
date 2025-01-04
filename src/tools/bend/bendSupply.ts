@@ -7,6 +7,7 @@ import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
 } from "../../utils/helpers";
+import { log } from "../../utils/logger";
 
 interface BendSupplyArgs {
   asset: Address;
@@ -64,13 +65,13 @@ export const bendSupplyTool: ToolConfig<BendSupplyArgs> = {
         args: [args.asset, parsedAmount, onBehalfOf, 0], // referralCode set to 0
       });
 
-      console.log(
+      log.info(
         "[INFO] Successfully supplied tokens to Bend. Transaction hash:",
         hash,
       );
       return hash;
     } catch (error: any) {
-      console.error(`[ERROR] Bend supply failed: ${error.message}`);
+      log.error(`[ERROR] Bend supply failed: ${error.message}`);
       throw new Error(`Bend supply failed: ${error.message}`);
     }
   },

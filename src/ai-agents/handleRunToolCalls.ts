@@ -2,13 +2,14 @@ import OpenAI from "openai";
 import { Run } from "openai/resources/beta/threads/runs";
 import { Thread } from "openai/resources/beta/threads";
 import { tools } from "../tools/allTools";
+import { log } from "../utils/logger";
 
 export async function handleRunToolCalls(
   run: Run,
   client: OpenAI,
   thread: Thread,
 ): Promise<Run> {
-  console.log(`[INFO] Handling tool calls for run ${run.id}`);
+  log.info(`[INFO] Handling tool calls for run ${run.id}`);
 
   const toolCalls = run.required_action?.submit_tool_outputs?.tool_calls;
   if (!toolCalls || toolCalls.length === 0) return run;
@@ -21,11 +22,11 @@ export async function handleRunToolCalls(
     toolCalls.map(async (tool) => {
       const toolConfig = tools[tool.function.name];
       if (!toolConfig) {
-        console.error(`[ERROR] Tool ${tool.function.name} not found`);
+        log.error(`[ERROR] Tool ${tool.function.name} not found`);
         return null;
       }
 
-      console.log(`[INFO] Executing: ${tool.function.name}`);
+      log.info(`[INFO] Executing: ${tool.function.name}`);
       try {
         const args = JSON.parse(tool.function.arguments);
         const output = await toolConfig.handler(args);
@@ -49,16 +50,16 @@ export async function handleRunToolCalls(
     if (result.status === "fulfilled" && result.value) {
       toolOutputs.push(result.value);
     } else if (result.status === "rejected") {
-      console.error(`[ERROR] Tool call failed: ${result.reason}`);
+      log.error(`[ERROR] Tool call failed: ${result.reason}`);
     }
   }
 
   if (toolOutputs.length === 0) {
-    console.log(`[INFO] No valid tool outputs to submit for run ${run.id}`);
+    log.info(`[INFO] No valid tool outputs to submit for run ${run.id}`);
     return run;
   }
 
-  console.log(
+  log.info(
     `[INFO] Submitting ${toolOutputs.length} tool outputs for run ${run.id}`,
   );
   return client.beta.threads.runs.submitToolOutputsAndPoll(thread.id, run.id, {

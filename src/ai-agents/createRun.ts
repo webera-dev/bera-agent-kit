@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { Run } from "openai/resources/beta/threads/runs";
 import { Thread } from "openai/resources/beta/threads";
+import { log } from "../utils/logger";
 
 /**
  * The createRun function is used to create and execute a run (a task or operation) for a specific thread in OpenAI’s Beta Threads API.
@@ -16,7 +17,7 @@ export async function createRun(
   thread: Thread,
   assistantId: string,
 ): Promise<Run> {
-  console.log(
+  log.info(
     `[INFO] Creating run for thread ${thread.id} with assistant ${assistantId}`,
   );
 

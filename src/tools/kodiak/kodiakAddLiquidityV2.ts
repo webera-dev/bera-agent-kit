@@ -8,6 +8,7 @@ import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
 } from "../../utils/helpers";
+import { log } from "../../utils/logger";
 
 interface KodiakAddLiquidityArgs {
   tokenA: Address;
@@ -78,7 +79,7 @@ export const kodiakAddLiquidityTool: ToolConfig<KodiakAddLiquidityArgs> = {
 
       const recipient = args.to || walletClient.account.address;
 
-      console.log(
+      log.info(
         `[INFO] Adding liquidity: ${args.amountADesired} ${args.tokenA} and ${args.amountBDesired} ${args.tokenB} for ${recipient}`,
       );
 
@@ -148,12 +149,10 @@ export const kodiakAddLiquidityTool: ToolConfig<KodiakAddLiquidityArgs> = {
         );
       }
 
-      console.log(
-        `[INFO] Liquidity added successfully: Transaction hash: ${tx}`,
-      );
+      log.info(`[INFO] Liquidity added successfully: Transaction hash: ${tx}`);
       return tx;
     } catch (error: any) {
-      console.error(`[ERROR] Adding liquidity failed: ${error.message}`);
+      log.error(`[ERROR] Adding liquidity failed: ${error.message}`);
       throw new Error(`Add liquidity failed: ${error.message}`);
     }
   },
