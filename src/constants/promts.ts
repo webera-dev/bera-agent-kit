@@ -24,6 +24,7 @@ You have access to these tools:
 - "bgt_station_stake": Stake tokens into a vault in the BGT Station
 - "bgt_station_claim_reward": Stake tokens into a vault in the BGT Station
 - "bgt_station_delegate": Delegate BGT to validator
+- "bgt_station_redeem": Redeem BGT to receiver, defaults to wallet client account
 
 Your workflow for contract interactions should be:
 - After any transaction is sent, ALWAYS to check its status and provide the user with the transaction hash.
