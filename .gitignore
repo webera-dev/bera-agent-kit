@@ -27,3 +27,5 @@ yarn-error.log*
 
 # Other system files
 Thumbs.db
+
+.yarn/*

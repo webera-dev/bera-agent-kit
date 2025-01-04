@@ -8,6 +8,9 @@ import { bgtStationClaimRewardTool } from "./bgtStation/bgtStationClaimBGT";
 import { infraredStakeIBGTTool } from "./infrared/infraredStakeIBGT";
 import { getTokenBalanceTool } from "./common/getTokenBalance";
 import { infraredWithdrawStakedIBGTTool } from "./infrared/infraredWithdrawStakedIBGT";
+import { bendSupplyTool } from "./bend/bendSupply";
+import { bgtStationDelegateTool } from "./bgtStation/bgtStationDelegateBGT";
+import { bgtStationRedeemTool } from "./bgtStation/bgtStationRedeem";
 
 export interface ToolConfig<T = any> {
   definition: {
@@ -37,4 +40,7 @@ export const tools: Record<string, ToolConfig> = {
   infrared_stake_ibgt: infraredStakeIBGTTool,
   infrared_withdraw_staked_ibgt: infraredWithdrawStakedIBGTTool,
   get_token_balance: getTokenBalanceTool,
+  bend_supply: bendSupplyTool,
+  bgt_station_delegate: bgtStationDelegateTool,
+  bgt_station_redeem: bgtStationRedeemTool,
 };

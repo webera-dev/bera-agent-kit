@@ -9,6 +9,7 @@ import {
 import { TokenABI } from "../../constants/tokenABI";
 import { CONTRACT, TOKEN } from "../../constants";
 import { checkAndApproveAllowance } from "../../utils/helpers";
+import { log } from "../../utils/logger";
 
 // TODO: In the futures, we should detect tokenIn by token name or symbol. So that user can easy to use
 interface KodiakSwapArgs {
@@ -66,7 +67,7 @@ export const kodiakSwapTool: ToolConfig<KodiakSwapArgs> = {
       const recipient = args.to || walletClient.account.address;
       const isNativeSwap = !args.tokenIn;
 
-      console.log(
+      log.info(
         `[INFO] Initiating Kodiak swap: ${args.amountIn} ${isNativeSwap ? "BERA" : args.tokenIn} for ${args.tokenOut} to ${recipient}`,
       );
 
@@ -134,10 +135,10 @@ export const kodiakSwapTool: ToolConfig<KodiakSwapArgs> = {
         );
       }
 
-      console.log(`[INFO] Kodiak swap successful: Transaction hash: ${tx}`);
+      log.info(`[INFO] Kodiak swap successful: Transaction hash: ${tx}`);
       return tx;
     } catch (error: any) {
-      console.error(`[ERROR] Kodiak swap failed: ${error.message}`);
+      log.error(`[ERROR] Kodiak swap failed: ${error.message}`);
       throw new Error(`Swap failed: ${error.message}`);
     }
   },

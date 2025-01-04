@@ -2,6 +2,7 @@ import { Address, formatUnits, parseUnits } from "viem";
 import { TokenABI } from "../constants/tokenABI";
 import axios from "axios";
 import { URL } from "../constants";
+import { log } from "./logger";
 
 const tokenDecimalsCache: Map<string, number> = new Map();
 
@@ -33,7 +34,7 @@ export const fetchTokenDecimalsAndParseAmount = async (
   amount: number | bigint,
 ): Promise<bigint> => {
   if (!tokenDecimalsCache.has(token)) {
-    console.log(`[INFO] Fetching token decimals for ${token}`);
+    log.info(`[INFO] Fetching token decimals for ${token}`);
     const tokenDecimals = await walletClient.readContract({
       address: token,
       abi: TokenABI,
@@ -45,7 +46,7 @@ export const fetchTokenDecimalsAndParseAmount = async (
 
   const tokenDecimals = tokenDecimalsCache.get(token)!;
   const parsedAmount = parseUnits(amount.toString(), tokenDecimals);
-  console.log(`[INFO] Parsed amount: ${parsedAmount.toString()} units`);
+  log.info(`[INFO] Parsed amount: ${parsedAmount.toString()} units`);
   return parsedAmount;
 };
 
@@ -55,7 +56,7 @@ export const checkAndApproveAllowance = async (
   spender: Address,
   amount: bigint,
 ): Promise<void> => {
-  console.log(`[INFO] Checking allowance for ${token} to spender ${spender}`);
+  log.info(`[INFO] Checking allowance for ${token} to spender ${spender}`);
 
   // Fetch current allowance
   const allowance = await walletClient.readContract({
@@ -65,10 +66,10 @@ export const checkAndApproveAllowance = async (
     args: [walletClient.account.address, spender],
   });
 
-  console.log(`[INFO] Current allowance: ${allowance}`);
+  log.info(`[INFO] Current allowance: ${allowance}`);
 
   if (BigInt(allowance) < amount) {
-    console.log(
+    log.info(
       `[INFO] Allowance insufficient. Approving ${amount} for spender ${spender}`,
     );
 
@@ -88,9 +89,9 @@ export const checkAndApproveAllowance = async (
       throw new Error("Approval transaction failed");
     }
 
-    console.log(`[INFO] Approval successful`);
+    log.info(`[INFO] Approval successful`);
   } else {
-    console.log(`[INFO] Sufficient allowance available`);
+    log.info(`[INFO] Sufficient allowance available`);
   }
 };
 
@@ -99,19 +100,19 @@ export const fetchVaultAndTokenAddress = async (
   isVault: boolean,
 ): Promise<{ vaultAddress: Address; stakingTokenAddress: Address }> => {
   try {
-    console.log(`[INFO] Fetching vaults data...`);
+    log.info(`[INFO] Fetching vaults data...`);
     const response = await axios.get(URL.BGTVaultURL);
     const vaults = response.data.vaults;
 
     for (const vault of vaults) {
       if (isVault && vault.vaultAddress === token) {
-        console.log(`[INFO] Found matching vault: ${vault.vaultAddress}`);
+        log.info(`[INFO] Found matching vault: ${vault.vaultAddress}`);
         return {
           vaultAddress: vault.vaultAddress as Address,
           stakingTokenAddress: vault.stakingTokenAddress as Address,
         };
       } else if (!isVault && vault.stakingTokenAddress === token) {
-        console.log(
+        log.info(
           `[INFO] Found matching staking token: ${vault.stakingTokenAddress}`,
         );
         return {
@@ -125,7 +126,7 @@ export const fetchVaultAndTokenAddress = async (
       `No matching ${isVault ? "staking token" : "vault"} address found for ${token}`,
     );
   } catch (error: any) {
-    console.error("[ERROR] Failed to fetch addresses:", error.message);
+    log.error("[ERROR] Failed to fetch addresses:", error.message);
     throw error;
   }
 };

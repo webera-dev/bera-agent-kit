@@ -2,11 +2,12 @@ import OpenAI from "openai";
 import { Thread } from "openai/resources/beta/threads";
 import { Run } from "openai/resources/beta/threads/runs";
 import { handleRunToolCalls } from "./handleRunToolCalls";
+import { log } from "../utils/logger";
 
 // Helper function to log with elapsed time
 function logWithTime(message: string, startTime: number) {
   const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1); // Calculate elapsed time in seconds
-  console.log(`[INFO] ${message} - ${elapsedSeconds}s`);
+  log.info(`[INFO] ${message} - ${elapsedSeconds}s`);
 }
 
 export async function performRun(run: Run, client: OpenAI, thread: Thread) {
@@ -21,7 +22,7 @@ export async function performRun(run: Run, client: OpenAI, thread: Thread) {
 
   if (run.status === "failed") {
     const errorMessage = `I encountered an error: ${run.last_error?.message || "Unknown error"}`;
-    console.error("Run failed:", run.last_error);
+    log.error("Run failed:", run.last_error);
     await client.beta.threads.messages.create(thread.id, {
       role: "assistant",
       content: errorMessage,
