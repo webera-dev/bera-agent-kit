@@ -12,6 +12,7 @@ export const CONTRACT = {
 export const TOKEN = {
   WBERA: "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8" as `0x${string}`,
   HONEY: "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03" as `0x${string}`,
+  BGT: "0xbDa130737BDd9618301681329bF2e46A016ff9Ad" as `0x${string}`,
 } as const;
 
 export const URL = {

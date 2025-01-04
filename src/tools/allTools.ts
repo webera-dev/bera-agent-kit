@@ -6,6 +6,7 @@ import { oogaBoogaSwapTool } from "./oogaBooga/oogaBoogaSwap";
 import { bgtStationStakeTool } from "./bgtStation/bgtStationStake";
 import { bgtStationClaimRewardTool } from "./bgtStation/bgtStationClaimBGT";
 import { bendSupplyTool } from "./bend/bendSupply";
+import { bgtStationDelegateTool } from "./bgtStation/bgtStationDelegateBGT";
 
 export interface ToolConfig<T = any> {
   definition: {
@@ -33,4 +34,5 @@ export const tools: Record<string, ToolConfig> = {
   bgt_station_stake: bgtStationStakeTool,
   bgt_station_claim_reward: bgtStationClaimRewardTool,
   bend_supply: bendSupplyTool,
+  bgt_station_delegate: bgtStationDelegateTool,
 };
