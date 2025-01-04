@@ -66,13 +66,12 @@ export const bendSupplyTool: ToolConfig<BendSupplyArgs> = {
       });
 
       log.info(
-        "[INFO] Successfully supplied tokens to Bend. Transaction hash:",
-        hash,
+        `Successfully supplied tokens to Bend. Transaction hash: ${hash}`,
       );
       return hash;
     } catch (error: any) {
-      log.error(`[ERROR] Bend supply failed: ${error.message}`);
-      throw new Error(`Bend supply failed: ${error.message}`);
+      log.error(`Bend supply failed: ${error.message}`);
+      throw error;
     }
   },
 };
