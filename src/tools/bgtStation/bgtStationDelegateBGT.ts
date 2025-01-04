@@ -4,6 +4,7 @@ import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { BGTABI } from "../../constants/tokenABI";
 import { TOKEN } from "../../constants";
 import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
+import { log } from "../../utils/logger.js";
 
 interface BGTStationDelegateArgs {
   validator: Address;
@@ -44,14 +45,14 @@ export const bgtStationDelegateTool: ToolConfig<BGTStationDelegateArgs> = {
 
       const walletClient = createViemWalletClient();
 
-      console.log("[INFO] Parsing amount based on token decimals...");
+      log.info("[INFO] Parsing amount based on token decimals...");
       const parsedAmount = await fetchTokenDecimalsAndParseAmount(
         walletClient,
         TOKEN.BGT,
         args.amount,
       );
 
-      console.log("[INFO] Delegating BGT using queueBoost...");
+      log.info("[INFO] Delegating BGT using queueBoost...");
       const delegateTx = await walletClient.writeContract({
         address: TOKEN.BGT,
         abi: BGTABI,
@@ -59,7 +60,7 @@ export const bgtStationDelegateTool: ToolConfig<BGTStationDelegateArgs> = {
         args: [args.validator, parsedAmount],
       });
 
-      console.log("[INFO] Waiting for transaction receipt...");
+      log.info("[INFO] Waiting for transaction receipt...");
       const receipt = await walletClient.waitForTransactionReceipt({
         hash: delegateTx as `0x${string}`,
       });
@@ -68,13 +69,13 @@ export const bgtStationDelegateTool: ToolConfig<BGTStationDelegateArgs> = {
         throw new Error("Delegation transaction failed.");
       }
 
-      console.log(
+      log.info(
         "[INFO] Delegation successful. Transaction Hash:",
         receipt.transactionHash,
       );
       return receipt.transactionHash;
     } catch (error: any) {
-      console.error("[ERROR] Failed to delegate BGT:", error.message);
+      log.error("[ERROR] Failed to delegate BGT:", error.message);
       throw new Error(`Failed to delegate BGT: ${error.message}`);
     }
   },
