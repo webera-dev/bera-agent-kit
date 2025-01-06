@@ -3,7 +3,7 @@ import { ToolConfig } from "../allTools.js";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { fetchVaultAndTokenAddress } from "../../utils/helpers";
 import { BerachainRewardsVaultABI } from "../../constants/bgtStationABI";
-import { log } from "../../utils/logger.js";
+import { log } from "../../utils/logger";
 
 interface BGTStationClaimRewardArgs {
   token?: Address; // Staking token address (optional)
@@ -73,12 +73,11 @@ export const bgtStationClaimRewardTool: ToolConfig<BGTStationClaimRewardArgs> =
         }
 
         log.info(
-          "[INFO] Claim reward successful. Transaction Hash:",
-          receipt.transactionHash,
+          `[INFO] Claim reward successful. Transaction Hash: ${receipt.transactionHash}`,
         );
         return receipt.transactionHash;
       } catch (error: any) {
-        log.error("[ERROR] Failed to claim rewards:", error.message);
+        log.error(`[ERROR] Failed to claim rewards: ${error.message}`);
         throw new Error(`Failed to claim rewards: ${error.message}`);
       }
     },

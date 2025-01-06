@@ -66,7 +66,7 @@ export const bendSupplyTool: ToolConfig<BendSupplyArgs> = {
       });
 
       log.info(
-        `Successfully supplied tokens to Bend. Transaction hash: ${hash}`,
+        `Successfully supplied tokens to Bend. Transaction hash: ${hash}`
       );
       return hash;
     } catch (error: any) {

@@ -7,7 +7,7 @@ import {
   fetchVaultAndTokenAddress,
 } from "../../utils/helpers";
 import { BerachainRewardsVaultABI } from "../../constants/bgtStationABI";
-import { log } from "../../utils/logger.js";
+import { log } from "../../utils/logger";
 
 interface BGTStationStakeArgs {
   token?: Address;
@@ -93,12 +93,11 @@ export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
       }
 
       log.info(
-        "[INFO] Stake successful. Transaction Hash:",
-        stakeReceipt.transactionHash,
+        `[INFO] Stake successful. Transaction Hash: ${stakeReceipt.transactionHash}`,
       );
       return stakeReceipt.transactionHash;
     } catch (error: any) {
-      log.error("[ERROR]", error.message);
+      log.error(`[ERROR] ${error.message}`);
       throw error;
     }
   },

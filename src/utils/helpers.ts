@@ -1,4 +1,4 @@
-import { Address, parseUnits } from "viem";
+import { Address, formatUnits, parseUnits } from "viem";
 import { TokenABI } from "../constants/tokenABI";
 import axios from "axios";
 import { URL } from "../constants";
@@ -6,10 +6,32 @@ import { log } from "./logger";
 
 const tokenDecimalsCache: Map<string, number> = new Map();
 
+export const fetchTokenDecimalsAndFormatAmount = async (
+  walletClient: any,
+  token: Address,
+  amount: bigint,
+): Promise<string> => {
+  if (!tokenDecimalsCache.has(token)) {
+    console.log(`[INFO] Fetching token decimals for ${token}`);
+    const tokenDecimals = await walletClient.readContract({
+      address: token,
+      abi: TokenABI,
+      functionName: "decimals",
+      args: [],
+    });
+    tokenDecimalsCache.set(token, Number(tokenDecimals));
+  }
+
+  const tokenDecimals = tokenDecimalsCache.get(token)!;
+  const formattedAmount = formatUnits(amount, tokenDecimals);
+  console.log(`[INFO] Formatted amount: ${formattedAmount.toString()} units`);
+  return formattedAmount;
+};
+
 export const fetchTokenDecimalsAndParseAmount = async (
   walletClient: any,
   token: Address,
-  amount: number,
+  amount: number | bigint,
 ): Promise<bigint> => {
   if (!tokenDecimalsCache.has(token)) {
     log.info(`[INFO] Fetching token decimals for ${token}`);
@@ -104,7 +126,7 @@ export const fetchVaultAndTokenAddress = async (
       `No matching ${isVault ? "staking token" : "vault"} address found for ${token}`,
     );
   } catch (error: any) {
-    log.error("[ERROR] Failed to fetch addresses:", error.message);
+    log.error(`[ERROR] Failed to fetch addresses: ${error.message}`);
     throw error;
   }
 };

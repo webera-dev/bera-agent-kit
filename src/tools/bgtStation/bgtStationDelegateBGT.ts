@@ -4,7 +4,7 @@ import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { BGTABI } from "../../constants/tokenABI";
 import { TOKEN } from "../../constants";
 import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
-import { log } from "../../utils/logger.js";
+import { log } from "../../utils/logger";
 
 interface BGTStationDelegateArgs {
   validator: Address;
@@ -70,12 +70,11 @@ export const bgtStationDelegateTool: ToolConfig<BGTStationDelegateArgs> = {
       }
 
       log.info(
-        "[INFO] Delegation successful. Transaction Hash:",
-        receipt.transactionHash,
+        `[INFO] Delegation successful. Transaction Hash: ${receipt.transactionHash}`,
       );
       return receipt.transactionHash;
     } catch (error: any) {
-      log.error("[ERROR] Failed to delegate BGT:", error.message);
+      log.error(`[ERROR] Failed to delegate BGT: ${error.message}`);
       throw new Error(`Failed to delegate BGT: ${error.message}`);
     }
   },
