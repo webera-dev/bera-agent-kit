@@ -49,12 +49,11 @@ async function handleChat(thread: Thread, assistant: Assistant): Promise<void> {
         const result = await performRun(run, openAIClient, thread);
 
         if (result?.type === "text") {
-          log.info("\nBeraBot:", result.text.value);
+          log.info(`\nBeraBot: ${result.text.value}`);
         }
       } catch (err) {
         log.error(
-          "Error during message processing:",
-          err instanceof Error ? err.message : "Unknown error",
+          `Error during message processing: ${err instanceof Error ? err.message : "Unknown error"}`,
         );
       }
     }
@@ -73,8 +72,7 @@ async function main(): Promise<void> {
     await handleChat(thread, assistant);
   } catch (err) {
     log.error(
-      "Error initializing chat:",
-      err instanceof Error ? err.message : "Unknown error",
+      `Error initializing chat: ${err instanceof Error ? err.message : "Unknown error"}`,
     );
     process.exit(1);
   }
@@ -83,8 +81,7 @@ async function main(): Promise<void> {
 // Entry point
 main().catch((err) => {
   log.error(
-    "Unhandled error:",
-    err instanceof Error ? err.message : "Unknown error",
+    `Unhandled error: ${err instanceof Error ? err.message : "Unknown error"}`,
   );
   process.exit(1);
 });

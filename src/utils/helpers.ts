@@ -104,7 +104,7 @@ export const fetchVaultAndTokenAddress = async (
       `No matching ${isVault ? "staking token" : "vault"} address found for ${token}`,
     );
   } catch (error: any) {
-    log.error("[ERROR] Failed to fetch addresses:", error.message);
+    log.error(`[ERROR] Failed to fetch addresses: ${error.message}`);
     throw error;
   }
 };
