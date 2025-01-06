@@ -3,7 +3,7 @@ import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { BGTABI } from "../../constants/tokenABI";
 import { TOKEN } from "../../constants";
 import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
-import { log } from "../../utils/logger.js";
+import { log } from "../../utils/logger";
 
 interface BGTStationRedeemArgs {
   receiver?: string; // Address of the receiver for redemption (optional)
@@ -70,12 +70,11 @@ export const bgtStationRedeemTool: ToolConfig<BGTStationRedeemArgs> = {
       }
 
       log.info(
-        "[INFO] Redemption successful. Transaction Hash:",
-        receipt.transactionHash,
+        `[INFO] Redemption successful. Transaction Hash: ${receipt.transactionHash}`,
       );
       return receipt.transactionHash;
     } catch (error: any) {
-      log.error("[ERROR] Failed to redeem BGT:", error.message);
+      log.error(`[ERROR] Failed to redeem BGT: ${error.message}`);
       throw new Error(`Failed to redeem BGT: ${error.message}`);
     }
   },

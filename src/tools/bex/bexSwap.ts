@@ -8,7 +8,7 @@ import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
 } from "../../utils/helpers";
-import { log } from "../../utils/logger.js";
+import { log } from "../../utils/logger";
 
 interface BexSwapArgs {
   base: Address;

@@ -4,7 +4,7 @@ import { ToolConfig } from "../allTools.js";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { URL } from "../../constants";
 import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
-import { log } from "../../utils/logger.js";
+import { log } from "../../utils/logger";
 
 interface OogaBoogaSwapArgs {
   base: Address; // Token to swap from
@@ -58,7 +58,9 @@ const checkAndApproveAllowance = async (
     if (receipt.status !== "success") {
       throw new Error("Approval transaction failed");
     }
-    log.info("Approval complete", receipt.transactionHash, receipt.status);
+    log.info(
+      `[INFO] Approval complete: ${receipt.transactionHash} ${receipt.status}`,
+    );
   } else {
     log.info(`[INFO] Sufficient allowance available.`);
   }
@@ -100,7 +102,7 @@ const performSwap = async (
       hash: swapHash,
     });
 
-    log.info(`[DEBUG] Swap Receipt:`, swapReceipt);
+    log.info(`[DEBUG] Swap Receipt: ${swapReceipt}`);
     if (swapReceipt.status !== "success") {
       throw new Error("Swap transaction failed");
     }
