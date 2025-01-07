@@ -18,7 +18,7 @@ export async function createRun(
   assistantId: string,
 ): Promise<Run> {
   log.info(
-    `[INFO] Creating run for thread ${thread.id} with assistant ${assistantId}`,
+    `Running for thread ${thread.id} with assistant ${assistantId}`,
   );
 
   let run = await client.beta.threads.runs.create(thread.id, {

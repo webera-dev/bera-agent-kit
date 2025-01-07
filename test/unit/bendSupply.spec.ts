@@ -20,8 +20,12 @@ describe("bendSupply Tool", () => {
     sinon
       .stub(viemClientModule, "createViemWalletClient")
       .returns(mockWalletClient as any);
-    sinon.stub(helpersModule, "fetchTokenDecimalsAndParseAmount").resolves(parseEther("100"));
-    sinon.stub(helpersModule, "checkAndApproveAllowance").resolves() as sinon.SinonStub;
+    sinon
+      .stub(helpersModule, "fetchTokenDecimalsAndParseAmount")
+      .resolves(parseEther("100"));
+    sinon
+      .stub(helpersModule, "checkAndApproveAllowance")
+      .resolves() as sinon.SinonStub;
   });
 
   afterEach(() => {
@@ -32,7 +36,7 @@ describe("bendSupply Tool", () => {
     expect(bendSupplyTool.definition.type).to.equal("function");
     expect(bendSupplyTool.definition.function.name).to.equal("bend_supply");
     expect(
-      bendSupplyTool.definition.function.parameters.required
+      bendSupplyTool.definition.function.parameters.required,
     ).to.deep.equal(["asset", "amount"]);
   });
 
@@ -88,8 +92,13 @@ describe("bendSupply Tool", () => {
       amount: testAmount,
     });
 
-    expect((helpersModule.checkAndApproveAllowance as sinon.SinonStub).calledOnce).to.be.true;
-    expect((helpersModule.checkAndApproveAllowance as sinon.SinonStub).firstCall.args).to.deep.equal([
+    expect(
+      (helpersModule.checkAndApproveAllowance as sinon.SinonStub).calledOnce,
+    ).to.be.true;
+    expect(
+      (helpersModule.checkAndApproveAllowance as sinon.SinonStub).firstCall
+        .args,
+    ).to.deep.equal([
       mockWalletClient,
       testAsset,
       CONTRACT.Bend,
