@@ -7,7 +7,7 @@ import { log } from "../utils/logger";
 // Helper function to log with elapsed time
 function logWithTime(message: string, startTime: number) {
   const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1); // Calculate elapsed time in seconds
-  log.info(`[INFO] ${message} - ${elapsedSeconds}s`);
+  log.info(`${message} - ${elapsedSeconds}s`);
 }
 
 export async function performRun(run: Run, client: OpenAI, thread: Thread) {

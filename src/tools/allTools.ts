@@ -11,6 +11,7 @@ import { infraredWithdrawStakedIBGTTool } from "./infrared/infraredWithdrawStake
 import { bendSupplyTool } from "./bend/bendSupply";
 import { bgtStationDelegateTool } from "./bgtStation/bgtStationDelegateBGT";
 import { bgtStationRedeemTool } from "./bgtStation/bgtStationRedeem";
+import { liveSearchTool } from "./tavilySearch/liveSearch";
 
 export interface ToolConfig<T = any> {
   definition: {
@@ -43,4 +44,5 @@ export const tools: Record<string, ToolConfig> = {
   bend_supply: bendSupplyTool,
   bgt_station_delegate: bgtStationDelegateTool,
   bgt_station_redeem: bgtStationRedeemTool,
+  liveSearch: liveSearchTool,
 };
