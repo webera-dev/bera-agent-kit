@@ -3,34 +3,38 @@ import { ToolConfig } from "../allTools";
 import { BEND_ABI } from "../../constants/bendABI";
 import { CONTRACT } from "../../constants/index";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
-import {
-  checkAndApproveAllowance,
-  fetchTokenDecimalsAndParseAmount,
-} from "../../utils/helpers";
+import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
 import { log } from "../../utils/logger";
 
-interface BendSupplyArgs {
+interface BendBorrowArgs {
   asset: Address;
   amount: number;
+  interestRateMode?: number; // 1 for stable, 2 for variable
 }
 
-export const bendSupplyTool: ToolConfig<BendSupplyArgs> = {
+export const bendBorrowTool: ToolConfig<BendBorrowArgs> = {
   definition: {
     type: "function",
     function: {
-      name: "bend_supply",
-      description: "Supply (deposit) tokens to Bend Protocol",
+      name: "bend_borrow",
+      description: "Borrow tokens from Bend Protocol",
       parameters: {
         type: "object",
         properties: {
           asset: {
             type: "string",
             pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Token address to supply",
+            description: "Token address to borrow",
           },
           amount: {
             type: "number",
-            description: "The amount of tokens to supply",
+            description: "The amount of tokens to borrow",
+          },
+          interestRateMode: {
+            type: "number",
+            enum: [1, 2],
+            description: "Interest rate mode (1 for stable, 2 for variable)",
+            default: 2,
           },
         },
         required: ["asset", "amount"],
@@ -41,6 +45,8 @@ export const bendSupplyTool: ToolConfig<BendSupplyArgs> = {
     try {
       const walletClient = createViemWalletClient();
       const onBehalfOf = walletClient.account.address;
+      const referralCode = 0;
+      const interestRateMode = BigInt(args.interestRateMode || 2); // Default to variable rate
 
       // Parse amount with correct decimals
       const parsedAmount = await fetchTokenDecimalsAndParseAmount(
@@ -49,28 +55,26 @@ export const bendSupplyTool: ToolConfig<BendSupplyArgs> = {
         args.amount,
       );
 
-      // Check and approve allowance if needed
-      await checkAndApproveAllowance(
-        walletClient,
-        args.asset,
-        CONTRACT.Bend,
-        parsedAmount,
-      );
-
-      // Execute supply transaction
+      // Execute borrow
       const hash = await walletClient.writeContract({
         address: CONTRACT.Bend,
         abi: BEND_ABI,
-        functionName: "supply",
-        args: [args.asset, parsedAmount, onBehalfOf, 0], // referralCode set to 0
+        functionName: "borrow",
+        args: [
+          args.asset,
+          parsedAmount,
+          interestRateMode,
+          referralCode,
+          onBehalfOf,
+        ],
       });
 
       log.info(
-        `Successfully supplied tokens to Bend. Transaction hash: ${hash}`
+        `Successfully borrowed tokens from Bend. Transaction hash: ${hash}`,
       );
       return hash;
     } catch (error: any) {
-      log.error(`Bend supply failed: ${error.message}`);
+      log.error(`Bend borrow failed: ${error.message}`);
       throw error;
     }
   },

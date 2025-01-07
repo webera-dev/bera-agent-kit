@@ -3,34 +3,31 @@ import { ToolConfig } from "../allTools";
 import { BEND_ABI } from "../../constants/bendABI";
 import { CONTRACT } from "../../constants/index";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
-import {
-  checkAndApproveAllowance,
-  fetchTokenDecimalsAndParseAmount,
-} from "../../utils/helpers";
+import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
 import { log } from "../../utils/logger";
 
-interface BendSupplyArgs {
+interface BendWithdrawArgs {
   asset: Address;
   amount: number;
 }
 
-export const bendSupplyTool: ToolConfig<BendSupplyArgs> = {
+export const bendWithdrawTool: ToolConfig<BendWithdrawArgs> = {
   definition: {
     type: "function",
     function: {
-      name: "bend_supply",
-      description: "Supply (deposit) tokens to Bend Protocol",
+      name: "bend_withdraw",
+      description: "Withdraw tokens from Bend Protocol",
       parameters: {
         type: "object",
         properties: {
           asset: {
             type: "string",
             pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Token address to supply",
+            description: "Token address to withdraw",
           },
           amount: {
             type: "number",
-            description: "The amount of tokens to supply",
+            description: "The amount of tokens to withdraw",
           },
         },
         required: ["asset", "amount"],
@@ -49,28 +46,20 @@ export const bendSupplyTool: ToolConfig<BendSupplyArgs> = {
         args.amount,
       );
 
-      // Check and approve allowance if needed
-      await checkAndApproveAllowance(
-        walletClient,
-        args.asset,
-        CONTRACT.Bend,
-        parsedAmount,
-      );
-
-      // Execute supply transaction
+      // Execute withdraw
       const hash = await walletClient.writeContract({
         address: CONTRACT.Bend,
         abi: BEND_ABI,
-        functionName: "supply",
-        args: [args.asset, parsedAmount, onBehalfOf, 0], // referralCode set to 0
+        functionName: "withdraw",
+        args: [args.asset, parsedAmount, onBehalfOf],
       });
 
       log.info(
-        `Successfully supplied tokens to Bend. Transaction hash: ${hash}`
+        `Successfully withdrew tokens from Bend. Transaction hash: ${hash}`,
       );
       return hash;
     } catch (error: any) {
-      log.error(`Bend supply failed: ${error.message}`);
+      log.error(`Bend withdraw failed: ${error.message}`);
       throw error;
     }
   },

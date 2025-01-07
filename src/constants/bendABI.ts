@@ -50,4 +50,65 @@ export const BEND_ABI = [
     outputs: [],
     stateMutability: "nonpayable",
   },
+  {
+    type: "function",
+    name: "borrow",
+    inputs: [
+      {
+        name: "asset",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "interestRateMode",
+        type: "uint256",
+        internaltype: "uint256",
+      },
+      {
+        name: "refferalCode",
+        type: "uint16",
+        internalType: "uint16",
+      },
+      {
+        name: "onBehalfOf",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "repay",
+    inputs: [
+      {
+        name: "asset",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "rateMode",
+        type: "uint256",
+        internaltype: "uint256",
+      },
+      {
+        name: "onBehalfOf",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
 ] as const;

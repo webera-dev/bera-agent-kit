@@ -9,6 +9,9 @@ import { infraredStakeIBGTTool } from "./infrared/infraredStakeIBGT";
 import { getTokenBalanceTool } from "./common/getTokenBalance";
 import { infraredWithdrawStakedIBGTTool } from "./infrared/infraredWithdrawStakedIBGT";
 import { bendSupplyTool } from "./bend/bendSupply";
+import { bendWithdrawTool } from "./bend/bendWithdraw";
+import { bendBorrowTool } from "./bend/bendBorrow";
+import { bendRepayTool } from "./bend/bendRepay";
 import { bgtStationDelegateTool } from "./bgtStation/bgtStationDelegateBGT";
 import { bgtStationRedeemTool } from "./bgtStation/bgtStationRedeem";
 import { liveSearchTool } from "./tavilySearch/liveSearch";
@@ -42,6 +45,9 @@ export const tools: Record<string, ToolConfig> = {
   infrared_withdraw_staked_ibgt: infraredWithdrawStakedIBGTTool,
   get_token_balance: getTokenBalanceTool,
   bend_supply: bendSupplyTool,
+  bend_withdraw: bendWithdrawTool,
+  bend_borrow: bendBorrowTool,
+  bend_repay: bendRepayTool,
   bgt_station_delegate: bgtStationDelegateTool,
   bgt_station_redeem: bgtStationRedeemTool,
   liveSearch: liveSearchTool,
