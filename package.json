@@ -1,8 +1,25 @@
 {
   "name": "bera-agent-kit",
   "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/Webera-Finance/bera-agent-kit",
+  "description": "Open-source agent kit for interacting with Berachain protocols",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Webera-Finance/bera-agent-kit"
+  },
+  "keywords": [
+    "berachain",
+    "agent",
+    "blockchain",
+    "defi",
+    "automation"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "npx mocha -r ts-node/register 'test/**/*.spec.ts'",
@@ -11,7 +28,11 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "docs": "typedoc src --out docs",
-    "start": "node dist/index.js"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^1.0.0",

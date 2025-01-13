@@ -1,5 +1,5 @@
 import { Address, parseUnits } from "viem";
-import { ToolConfig } from "../allTools.js";
+import { ToolConfig } from "../allTools";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import {
   checkAndApproveAllowance,

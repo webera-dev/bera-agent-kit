@@ -1,87 +1,79 @@
 import "dotenv/config";
 import OpenAI from "openai";
-import readline from "readline";
+import { Thread } from "openai/resources/beta/threads";
+import { Assistant } from "openai/resources/beta/assistants";
 import { createAssistant } from "./ai-agents/createAssistant";
 import { createThread } from "./ai-agents/createThread";
 import { createRun } from "./ai-agents/createRun";
 import { performRun } from "./ai-agents/performRun";
-import { Thread } from "openai/resources/beta/threads";
-import { Assistant } from "openai/resources/beta/assistants";
 import { log } from "./utils/logger";
+import { WalletClient } from "viem";
 
-// Initialize OpenAI client
-const openAIClient = new OpenAI();
-
-// Create a readline interface
-function createReadlineInterface() {
-  return readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+export interface BeraAgentConfig {
+  openAIApiKey: string;
 }
 
-// Type-safe promise-based question function
-function askQuestion(rl: readline.Interface, query: string): Promise<string> {
-  return new Promise((resolve) => rl.question(query, resolve));
-}
+export class BeraAgent {
+  private openAIClient: OpenAI;
+  private assistant: Assistant | null = null;
+  private thread: Thread | null = null;
+  private walletClient: WalletClient;
 
-// Handle chat conversation
-async function handleChat(thread: Thread, assistant: Assistant): Promise<void> {
-  const rl = createReadlineInterface();
-  log.info('Chat started! Type "exit" to end the conversation.');
-
-  try {
-    while (true) {
-      const userInput = await askQuestion(rl, "\nYou: ");
-
-      if (userInput.trim().toLowerCase() === "exit") {
-        log.info("Exiting the chat...");
-        break;
-      }
-
-      try {
-        await openAIClient.beta.threads.messages.create(thread.id, {
-          role: "user",
-          content: userInput,
-        });
-
-        const run = await createRun(openAIClient, thread, assistant.id);
-        const result = await performRun(run, openAIClient, thread);
-
-        if (result?.type === "text") {
-          log.info(`\nBeraBot: ${result.text.value}`);
-        }
-      } catch (err) {
-        log.error(
-          `Error during message processing: ${err instanceof Error ? err.message : "Unknown error"}`,
-        );
-      }
-    }
-  } finally {
-    rl.close();
+  constructor(config: BeraAgentConfig, walletClient: WalletClient) {
+    this.openAIClient = new OpenAI({ apiKey: config.openAIApiKey });
+    this.walletClient = walletClient;
   }
-}
 
-// Main function to initialize resources and start the chat
-async function main(): Promise<void> {
-  try {
-    log.info("Initializing resources...");
-    const assistant = await createAssistant(openAIClient);
-    const thread = await createThread(openAIClient);
-
-    await handleChat(thread, assistant);
-  } catch (err) {
-    log.error(
-      `Error initializing chat: ${err instanceof Error ? err.message : "Unknown error"}`,
+  async initialize(): Promise<void> {
+    this.assistant = await createAssistant(
+      this.openAIClient,
+      this.walletClient,
     );
-    process.exit(1);
+    this.thread = await createThread(this.openAIClient);
+  }
+
+  async sendMessage(message: string): Promise<string> {
+    if (!this.assistant || !this.thread) {
+      throw new Error("BeraAgent not initialized. Call initialize() first.");
+    }
+
+    await this.openAIClient.beta.threads.messages.create(this.thread.id, {
+      role: "user",
+      content: message,
+    });
+
+    const run = await createRun(
+      this.openAIClient,
+      this.thread,
+      this.assistant.id,
+    );
+    const result = await performRun(
+      run,
+      this.openAIClient,
+      this.thread,
+      this.walletClient,
+    );
+
+    if (result?.type === "text") {
+      return result.text.value;
+    }
+
+    throw new Error("Unexpected response format");
+  }
+
+  getAssistant(): Assistant | null {
+    return this.assistant;
+  }
+
+  getThread(): Thread | null {
+    return this.thread;
+  }
+
+  getWalletClient(): WalletClient {
+    return this.walletClient;
   }
 }
 
-// Entry point
-main().catch((err) => {
-  log.error(
-    `Unhandled error: ${err instanceof Error ? err.message : "Unknown error"}`,
-  );
-  process.exit(1);
-});
+// Export individual components for advanced usage
+export { createAssistant, createThread, createRun, performRun };
+export { log as logger };

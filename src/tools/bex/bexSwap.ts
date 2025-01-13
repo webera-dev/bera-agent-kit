@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Address, parseUnits } from "viem";
-import { ToolConfig } from "../allTools.js";
+import { ToolConfig } from "../allTools";
 import { BeraCrocMultiSwapABI } from "../../constants/bexABI";
 import { CONTRACT, TOKEN, URL } from "../../constants";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";

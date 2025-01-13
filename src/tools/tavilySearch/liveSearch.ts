@@ -1,8 +1,8 @@
 import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { ToolConfig } from "../allTools.js";
-import { gpt4o } from "../../utils/model.js";
-import { log } from "../../utils/logger.js";
+import { ToolConfig } from "../allTools";
+import { gpt4o } from "../../utils/model";
+import { log } from "../../utils/logger";
 
 // Initialize tools array
 const searchTools = [];

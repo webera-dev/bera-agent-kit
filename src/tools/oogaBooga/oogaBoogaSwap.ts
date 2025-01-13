@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Address } from "viem";
-import { ToolConfig } from "../allTools.js";
+import { ToolConfig } from "../allTools";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { URL } from "../../constants";
 import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";

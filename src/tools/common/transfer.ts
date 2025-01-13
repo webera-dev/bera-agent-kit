@@ -1,6 +1,6 @@
 import { Address, parseUnits } from "viem";
 import { createViemPublicClient } from "../../utils/createViemPublicClient";
-import { ToolConfig } from "../allTools.js";
+import { ToolConfig } from "../allTools";
 import { parseEther } from "viem/utils";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { TokenABI } from "../../constants/tokenABI";
@@ -44,7 +44,7 @@ export const transferTool: ToolConfig<TransferArgs> = {
     try {
       const walletClient = createViemWalletClient();
       console.info(
-        `[INFO] Start transfer ${amount} ${tokenAddress} from ${walletClient.account.address} to ${to} `,
+        `[INFO] Start transfer ${amount} ${tokenAddress || "BERA"} from ${walletClient.account.address} to ${to} `,
       );
       let tx: string;
 

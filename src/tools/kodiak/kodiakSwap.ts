@@ -1,7 +1,7 @@
 import { Address, parseUnits } from "viem";
 import { createViemPublicClient } from "../../utils/createViemPublicClient";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
-import { ToolConfig } from "../allTools.js";
+import { ToolConfig } from "../allTools";
 import {
   KodiakSwapRouter02ABI,
   KodiakUniswapV2Router02ABI,

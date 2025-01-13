@@ -1,12 +1,12 @@
 import { Address, parseUnits } from "viem";
-import { ToolConfig } from "../allTools.js";
-import { CONTRACT, TOKEN } from "../../constants/index.js";
-import { createViemWalletClient } from "../../utils/createViemWalletClient.js";
+import { ToolConfig } from "../allTools";
+import { CONTRACT, TOKEN } from "../../constants/index";
+import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
-} from "../../utils/helpers.js";
-import { InfraredVaultABI } from "../../constants/infraredABI.js";
+} from "../../utils/helpers";
+import { InfraredVaultABI } from "../../constants/infraredABI";
 
 interface InfraredWithdrawStakedIBGTArgs {
   withdrawAmount: number;

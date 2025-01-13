@@ -1,13 +1,13 @@
 import { Address } from "viem";
-import { ToolConfig } from "../allTools.js";
+import { ToolConfig } from "../allTools";
 import { formatEther } from "viem";
 import { createViemPublicClient } from "../../utils/createViemPublicClient";
-import { TOKEN } from "../../constants/index.js";
-import { TokenABI } from "../../constants/tokenABI.js";
+import { TOKEN } from "../../constants/index";
+import { TokenABI } from "../../constants/tokenABI";
 import {
   fetchTokenDecimalsAndFormatAmount,
   fetchTokenDecimalsAndParseAmount,
-} from "../../utils/helpers.js";
+} from "../../utils/helpers";
 
 interface GetTokenBalanceArgs {
   wallet: Address;

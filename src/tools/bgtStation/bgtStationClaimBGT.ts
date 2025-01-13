@@ -1,5 +1,5 @@
 import { Address } from "viem";
-import { ToolConfig } from "../allTools.js";
+import { ToolConfig } from "../allTools";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { fetchVaultAndTokenAddress } from "../../utils/helpers";
 import { BerachainRewardsVaultABI } from "../../constants/bgtStationABI";
