@@ -1,48 +1,93 @@
-import winston from "winston";
-import path from "path";
-import fs from "fs";
+// let winston: any = {};
+// let path;
 
-// Ensure logs directory exists
-const logDir = path.join(process.cwd(), "logs");
-fs.mkdirSync(logDir, { recursive: true });
+// // Check if fs module is available
+// let fs: typeof import("fs") | null = null;
+// try {
+//   fs = require("fs");
+//   path = require("path");
+//   winston = require("winston");
+// } catch {
+//   fs = null;
+// }
 
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(
-    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    winston.format.errors({ stack: true }),
-    winston.format.splat(),
-    winston.format.json(),
-  ),
-  defaultMeta: { service: "bera-agent-kit" },
-  transports: [
-    // Error logs
-    new winston.transports.File({
-      filename: path.join(logDir, "error.log"),
-      level: "error",
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-    // Combined logs
-    new winston.transports.File({
-      filename: path.join(logDir, "combined.log"),
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-  ],
-});
+// // Simple console logger for environments without winston
+// const createSimpleLogger = () => {
+//   return {
+//     info: (message: string, ...meta: any[]) => {
+//       console.log(`[INFO] ${message}`, ...meta);
+//     },
+//     warn: (message: string, ...meta: any[]) => {
+//       console.warn(`[WARN] ${message}`, ...meta);
+//     },
+//     error: (message: string, ...meta: any[]) => {
+//       console.error(`[ERROR] ${message}`, ...meta);
+//     },
+//     debug: (message: string, ...meta: any[]) => {
+//       console.debug(`[DEBUG] ${message}`, ...meta);
+//     },
+//     add: () => {},
+//     log: () => {},
+//   };
+// };
 
-// If we're not in production, also log to console
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.simple(),
-      ),
-    }),
-  );
-}
+// // Try to create winston logger, fallback to simple logger
+// let logger: any;
+// try {
+//   // Determine log directory
+//   const logDir = fs ? path.join(process.cwd(), "logs") : "./logs";
+
+//   // Ensure logs directory exists if fs is available
+//   if (fs) {
+//     try {
+//       fs.mkdirSync(logDir, { recursive: true });
+//     } catch (error) {
+//       console.warn("Could not create logs directory:", error);
+//     }
+//   }
+
+//   logger = winston.createLogger({
+//     level: "info",
+//     format: winston.format.combine(
+//       winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+//       winston.format.errors({ stack: true }),
+//       winston.format.splat(),
+//       winston.format.json(),
+//     ),
+//     defaultMeta: { service: "bera-agent-kit" },
+//     transports: fs
+//       ? [
+//           // Error logs
+//           new winston.transports.File({
+//             filename: path.join(logDir, "error.log"),
+//             level: "error",
+//             maxsize: 5242880, // 5MB
+//             maxFiles: 5,
+//           }),
+//           // Combined logs
+//           new winston.transports.File({
+//             filename: path.join(logDir, "combined.log"),
+//             maxsize: 5242880, // 5MB
+//             maxFiles: 5,
+//           }),
+//         ]
+//       : [],
+//   });
+
+//   // Always add console transport
+//   logger.add(
+//     new winston.transports.Console({
+//       format: winston.format.combine(
+//         winston.format.colorize(),
+//         winston.format.simple(),
+//       ),
+//     }),
+//   );
+// } catch {
+//   // Fallback to simple console logger if winston is not available
+//   logger = createSimpleLogger();
+// }
+const logger = console;
 
 // Export different log levels for convenience
 export const log = {

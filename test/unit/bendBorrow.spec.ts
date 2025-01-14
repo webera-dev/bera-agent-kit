@@ -44,10 +44,13 @@ describe("bendBorrow Tool", () => {
 
     mockWalletClient.writeContract.resolves(mockTxHash);
 
-    const result = await bendBorrowTool.handler({
-      asset: testAsset,
-      amount: testAmount,
-    });
+    const result = await bendBorrowTool.handler(
+      {
+        asset: testAsset,
+        amount: testAmount,
+      },
+      mockWalletClient as any,
+    );
 
     expect(result).to.equal(mockTxHash);
     expect(mockWalletClient.writeContract.calledOnce).to.be.true;
@@ -73,11 +76,14 @@ describe("bendBorrow Tool", () => {
 
     mockWalletClient.writeContract.resolves(mockTxHash);
 
-    const result = await bendBorrowTool.handler({
-      asset: testAsset,
-      amount: testAmount,
-      interestRateMode: stableRateMode,
-    });
+    const result = await bendBorrowTool.handler(
+      {
+        asset: testAsset,
+        amount: testAmount,
+        interestRateMode: stableRateMode,
+      },
+      mockWalletClient as any,
+    );
 
     expect(result).to.equal(mockTxHash);
     expect(mockWalletClient.writeContract.calledOnce).to.be.true;
@@ -103,10 +109,13 @@ describe("bendBorrow Tool", () => {
     mockWalletClient.writeContract.rejects(new Error(errorMessage));
 
     try {
-      await bendBorrowTool.handler({
-        asset: testAsset,
-        amount: testAmount,
-      });
+      await bendBorrowTool.handler(
+        {
+          asset: testAsset,
+          amount: testAmount,
+        },
+        mockWalletClient as any,
+      );
       expect.fail("Should have thrown an error");
     } catch (error: any) {
       expect(error.message).to.include(errorMessage);

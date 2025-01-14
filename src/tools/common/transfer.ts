@@ -40,9 +40,9 @@ export const transferTool: ToolConfig<TransferArgs> = {
       },
     },
   },
-  handler: async ({ to, amount, tokenAddress }) => {
+  handler: async ({ to, amount, tokenAddress }, walletClient: any) => {
     try {
-      const walletClient = createViemWalletClient();
+      // const walletClient = createViemWalletClient();
       console.info(
         `[INFO] Start transfer ${amount} ${tokenAddress || "BERA"} from ${walletClient.account.address} to ${to} `,
       );

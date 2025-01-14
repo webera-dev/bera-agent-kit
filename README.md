@@ -1,58 +1,61 @@
-# bera-agent-kit
-Open-source agent kit for interacting with Berachain protocols
+# Bera Agent Kit 🐻🚀
 
-## Installation
+Open-source agent kit for interacting with Berachain protocols using AI and blockchain technologies.
+
+## 🌟 Features
+
+- 🤖 AI-powered blockchain interaction
+- 🔗 Seamless integration with Berachain
+- 💻 TypeScript support
+- 🛠️ Multiple blockchain tools and utilities
+
+## 📦 Installation
 
 ```bash
 npm install bera-agent-kit
 ```
 
-## Quick Start
+## 🚀 Quick Start
 
 ```typescript
 import { BeraAgent } from 'bera-agent-kit';
+import { createViemWalletClient } from 'bera-agent-kit/utils/createViemWalletClient';
 
 async function main() {
-  const agent = new BeraAgent({
-    openAIApiKey: process.env.OPENAI_API_KEY,
-  });
+  // Create wallet client
+  const walletClient = createViemWalletClient();
 
-  // Initialize the agent
+  // Initialize BeraAgent
+  const agent = new BeraAgent(
+    { openAIApiKey: process.env.OPENAI_API_KEY },
+    walletClient
+  );
+
+  // Initialize and interact
   await agent.initialize();
-
-  // Send a message and get a response
-  const response = await agent.sendMessage('What can you help me with on Berachain?');
+  const response = await agent.sendMessage('Check my wallet balance');
   console.log(response);
 }
 ```
 
-## Features
+## 🔧 Prerequisites
 
-- Easy-to-use API for interacting with Berachain protocols
-- Built-in OpenAI integration for intelligent responses
-- Support for common operations like staking, borrowing, and swapping
-- TypeScript support out of the box
+- Node.js 18+
+- OpenAI API Key
+- Berachain Wallet
 
-## Environment Variables
+## 📚 Documentation
 
-Create a `.env` file in your project root:
+Full documentation available in the [docs](./docs) directory.
 
-```env
-OPENAI_API_KEY=your_openai_api_key_here
-```
+## 🤝 Contributing
 
-## Advanced Usage
+See [CONTRIBUTING.md](./CONTRIBUTING.md)
 
-See the [examples](./examples) directory for more usage examples.
+## 📄 License
 
-## Contributing
+MIT License
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on how to contribute.
+## 🐞 Issues
 
-## Documentation
-
-For detailed API documentation and guides, see our [documentation](./docs).
-
-## License
-
-MIT
+Report issues on our [GitHub Issues](https://github.com/Webera-Finance/bera-agent-kit/issues)

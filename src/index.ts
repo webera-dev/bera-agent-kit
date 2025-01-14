@@ -1,16 +1,21 @@
+// Main exports
 import "dotenv/config";
-import OpenAI from "openai";
+import OpenAI, { ClientOptions } from "openai";
 import { Thread } from "openai/resources/beta/threads";
 import { Assistant } from "openai/resources/beta/assistants";
+import { WalletClient } from "viem";
+
+// Agent-related imports
 import { createAssistant } from "./ai-agents/createAssistant";
 import { createThread } from "./ai-agents/createThread";
 import { createRun } from "./ai-agents/createRun";
 import { performRun } from "./ai-agents/performRun";
 import { log } from "./utils/logger";
-import { WalletClient } from "viem";
+import { createViemWalletClient } from "./utils/createViemWalletClient";
 
 export interface BeraAgentConfig {
-  openAIApiKey: string;
+  walletClient: WalletClient;
+  openAIConfig?: ClientOptions;
 }
 
 export class BeraAgent {
@@ -19,9 +24,11 @@ export class BeraAgent {
   private thread: Thread | null = null;
   private walletClient: WalletClient;
 
-  constructor(config: BeraAgentConfig, walletClient: WalletClient) {
-    this.openAIClient = new OpenAI({ apiKey: config.openAIApiKey });
-    this.walletClient = walletClient;
+  constructor(config: BeraAgentConfig) {
+    this.openAIClient = new OpenAI(config.openAIConfig);
+
+    // Use provided wallet client or create a default one
+    this.walletClient = config.walletClient || createViemWalletClient();
   }
 
   async initialize(): Promise<void> {
@@ -29,6 +36,7 @@ export class BeraAgent {
       this.openAIClient,
       this.walletClient,
     );
+
     this.thread = await createThread(this.openAIClient);
   }
 
@@ -36,7 +44,9 @@ export class BeraAgent {
     if (!this.assistant || !this.thread) {
       throw new Error("BeraAgent not initialized. Call initialize() first.");
     }
-
+    log.info(
+      `Sending message: ${message} for wallet ${this.walletClient.account?.address}`,
+    );
     await this.openAIClient.beta.threads.messages.create(this.thread.id, {
       role: "user",
       content: message,
@@ -74,6 +84,20 @@ export class BeraAgent {
   }
 }
 
-// Export individual components for advanced usage
-export { createAssistant, createThread, createRun, performRun };
-export { log as logger };
+// Utility exports
+export { createViemWalletClient } from "./utils/createViemWalletClient";
+export { createViemPublicClient } from "./utils/createViemPublicClient";
+export { log } from "./utils/logger";
+
+// Tool exports
+export { createTools } from "./tools/allTools";
+
+// Agent-related exports
+export { createAssistant } from "./ai-agents/createAssistant";
+export { createThread } from "./ai-agents/createThread";
+export { createRun } from "./ai-agents/createRun";
+export { performRun } from "./ai-agents/performRun";
+
+// Constants and types
+export * from "./constants";
+export * from "./tools/allTools";
