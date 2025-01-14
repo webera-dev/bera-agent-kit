@@ -47,10 +47,13 @@ describe("bendSupply Tool", () => {
 
     mockWalletClient.writeContract.resolves(mockTxHash);
 
-    const result = await bendSupplyTool.handler({
-      asset: testAsset,
-      amount: testAmount,
-    });
+    const result = await bendSupplyTool.handler(
+      {
+        asset: testAsset,
+        amount: testAmount,
+      },
+      mockWalletClient as any,
+    );
 
     expect(result).to.equal(mockTxHash);
     expect(mockWalletClient.writeContract.calledOnce).to.be.true;
@@ -70,10 +73,13 @@ describe("bendSupply Tool", () => {
     mockWalletClient.writeContract.rejects(new Error(errorMessage));
 
     try {
-      await bendSupplyTool.handler({
-        asset: testAsset,
-        amount: testAmount,
-      });
+      await bendSupplyTool.handler(
+        {
+          asset: testAsset,
+          amount: testAmount,
+        },
+        mockWalletClient as any,
+      );
       expect.fail("Should have thrown an error");
     } catch (error: any) {
       expect(error.message).to.include(errorMessage);
@@ -87,10 +93,13 @@ describe("bendSupply Tool", () => {
 
     mockWalletClient.writeContract.resolves(mockTxHash);
 
-    await bendSupplyTool.handler({
-      asset: testAsset,
-      amount: testAmount,
-    });
+    await bendSupplyTool.handler(
+      {
+        asset: testAsset,
+        amount: testAmount,
+      },
+      mockWalletClient as any,
+    );
 
     expect(
       (helpersModule.checkAndApproveAllowance as sinon.SinonStub).calledOnce,

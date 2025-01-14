@@ -17,7 +17,7 @@ import { bgtStationDelegateTool } from "./bgtStation/bgtStationDelegateBGT";
 import { bgtStationRedeemTool } from "./bgtStation/bgtStationRedeem";
 import { liveSearchTool } from "./tavilySearch/liveSearch";
 
-export interface ToolConfig<T = any> {
+export interface ToolConfig<T = any, W = WalletClient> {
   definition: {
     type: "function";
     function: {
@@ -30,10 +30,13 @@ export interface ToolConfig<T = any> {
       };
     };
   };
-  handler: (args: T, walletClient: WalletClient) => Promise<any>;
+  handler: (args: T, walletClient?: W) => Promise<any>;
 }
 
-export function createTools(walletClient: WalletClient): Record<string, ToolConfig> {
+export function createTools(
+  walletClient?: WalletClient,
+): Record<string, ToolConfig<any, WalletClient>> {
+  console.log("walletClient", walletClient);
   return {
     get_balance: getBalanceTool,
     transfer: transferTool,

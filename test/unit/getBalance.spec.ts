@@ -23,9 +23,10 @@ describe("getBalance Tool", () => {
   it("should have correct function definition", () => {
     expect(getBalanceTool.definition.type).to.equal("function");
     expect(getBalanceTool.definition.function.name).to.equal("get_balance");
+    // Wallet is optional, can check from embeded wallet client
     expect(
       getBalanceTool.definition.function.parameters.required,
-    ).to.deep.equal(["wallet"]);
+    ).to.deep.equal([]);
   });
 
   it("should return formatted balance for valid wallet address", async () => {
