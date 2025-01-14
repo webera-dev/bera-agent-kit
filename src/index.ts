@@ -25,11 +25,7 @@ export class BeraAgent {
   private walletClient: WalletClient;
 
   constructor(config: BeraAgentConfig) {
-    this.openAIClient = new OpenAI({
-      ...config.openAIConfig,
-      apiKey:
-        "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",
-    });
+    this.openAIClient = new OpenAI(config.openAIConfig);
 
     // Use provided wallet client or create a default one
     this.walletClient = config.walletClient || createViemWalletClient();
