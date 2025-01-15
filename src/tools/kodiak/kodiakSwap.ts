@@ -44,7 +44,7 @@ export const kodiakSwapTool: ToolConfig<KodiakSwapArgs> = {
             type: ["string"],
             pattern: "^0x[a-fA-F0-9]{40}$",
             description:
-              "Address of the input token (optional, defaults to ETH if null)",
+              "Address of the input token (optional, defaults to native token if null)",
           },
           tokenOut: {
             type: "string",
