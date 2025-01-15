@@ -36,44 +36,11 @@ jobs:
 
       - name: Build SDK
         run: yarn build
-
-      - name: Push to releases branch
-        run: |
-          # Configure git
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          
-          # Create and switch to a new temp branch
-          git checkout --orphan temp_releases
-          
-          # Remove all files from git tracking
-          git rm -rf .
-          
-          # Create dist directory
-          mkdir -p dist
-          
-          # Copy package.json and update it
-          cp package.json dist/
-          
-          # Stage only the dist directory
-          git add dist
-          
-          # Create commit
-          git commit -m "Release ${{ github.ref_name }} - dist files"
-          
-          # Rename branch
-          git branch -M temp_releases releases
-          
-          # Force push to releases branch
-          git push origin releases --force
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+      
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          files: |
-            dist/**/*
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          force_orphan: true
