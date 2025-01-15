@@ -26,10 +26,12 @@ async function main() {
   const walletClient = createViemWalletClient();
 
   // Initialize BeraAgent
-  const agent = new BeraAgent(
-    { openAIApiKey: process.env.OPENAI_API_KEY },
-    walletClient
-  );
+  const agent = new BeraAgent({
+    openAIConfig: {
+      apiKey: process.env.OPENAI_API_KEY || "",
+    },
+    walletClient,
+  });
 
   // Initialize and interact
   await agent.initialize();

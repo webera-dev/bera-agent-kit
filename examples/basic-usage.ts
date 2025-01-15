@@ -5,7 +5,9 @@ import { log } from "../src/utils/logger";
 async function example() {
   const walletClient = createViemWalletClient();
   const agent = new BeraAgent({
-    openAIApiKey: process.env.OPENAI_API_KEY || "",
+    openAIConfig: {
+      apiKey: process.env.OPENAI_API_KEY || "",
+    },
     walletClient,
   });
 
