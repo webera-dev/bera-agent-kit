@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,25 +26,29 @@ jobs:
         run: yarn install 
 
       - name: Run linting
-        run: yarn lint || exit 1
+        run: yarn lint
 
       - name: Run formatting check
-        run: yarn format --check || exit 1
+        run: yarn format --check
 
       - name: Run tests
-        run: yarn test || exit 1
+        run: yarn test
 
       - name: Build SDK
-        run: yarn build || exit 1
+        run: yarn build
 
-      - name: Create release branch
+      - name: Push to releases branch
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git checkout -b release
+          # Create and switch to a new branch based on the tag
+          git checkout -b releases
+          # Add dist directory
           git add dist -f
+          # Create commit
           git commit -m "Release ${{ github.ref_name }}"
-          git push origin release --force
+          # Force push to releases branch
+          git push origin releases --force
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -53,4 +59,4 @@ jobs:
           prerelease: false
           generate_release_notes: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
