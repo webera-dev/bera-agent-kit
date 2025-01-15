@@ -13,7 +13,8 @@ const distPkg = {
     viem: pkg.dependencies.viem,
     '@langchain/core': pkg.dependencies['@langchain/core'],
     '@langchain/community': pkg.dependencies['@langchain/community'],
-    '@langchain/langgraph': pkg.dependencies['@langchain/langgraph']
+    '@langchain/langgraph': pkg.dependencies['@langchain/langgraph'],
+    '@langchain/openai': pkg.dependencies['@langchain/openai'],
   },
   repository: pkg.repository,
   keywords: pkg.keywords,

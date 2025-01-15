@@ -2,6 +2,8 @@ name: Release SDK
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
 
