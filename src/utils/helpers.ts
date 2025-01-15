@@ -1,28 +1,39 @@
 import { Address, formatUnits, parseUnits } from "viem";
 import { TokenABI } from "../constants/tokenABI";
 import axios from "axios";
-import { URL } from "../constants";
+import { TOKEN, URL } from "../constants";
 import { log } from "./logger";
 
 const tokenDecimalsCache: Map<string, number> = new Map();
+
+export const fetchTokenDecimals = async (
+  walletClient: any,
+  token: Address,
+): Promise<number> => {
+  if (!tokenDecimalsCache.has(token)) {
+    if (token !== TOKEN.BERA) {
+      log.info(`[INFO] Fetching token decimals for ${token}`);
+      const tokenDecimals = await walletClient.readContract({
+        address: token,
+        abi: TokenABI,
+        functionName: "decimals",
+        args: [],
+      });
+      tokenDecimalsCache.set(token, Number(tokenDecimals));
+    } else {
+      tokenDecimalsCache.set(token, 18);
+    }
+  }
+
+  return tokenDecimalsCache.get(token)!;
+};
 
 export const fetchTokenDecimalsAndFormatAmount = async (
   walletClient: any,
   token: Address,
   amount: bigint,
 ): Promise<string> => {
-  if (!tokenDecimalsCache.has(token)) {
-    console.log(`[INFO] Fetching token decimals for ${token}`);
-    const tokenDecimals = await walletClient.readContract({
-      address: token,
-      abi: TokenABI,
-      functionName: "decimals",
-      args: [],
-    });
-    tokenDecimalsCache.set(token, Number(tokenDecimals));
-  }
-
-  const tokenDecimals = tokenDecimalsCache.get(token)!;
+  const tokenDecimals = await fetchTokenDecimals(walletClient, token);
   const formattedAmount = formatUnits(amount, tokenDecimals);
   console.log(`[INFO] Formatted amount: ${formattedAmount.toString()} units`);
   return formattedAmount;
@@ -33,18 +44,7 @@ export const fetchTokenDecimalsAndParseAmount = async (
   token: Address,
   amount: number | bigint,
 ): Promise<bigint> => {
-  if (!tokenDecimalsCache.has(token)) {
-    log.info(`[INFO] Fetching token decimals for ${token}`);
-    const tokenDecimals = await walletClient.readContract({
-      address: token,
-      abi: TokenABI,
-      functionName: "decimals",
-      args: [],
-    });
-    tokenDecimalsCache.set(token, Number(tokenDecimals));
-  }
-
-  const tokenDecimals = tokenDecimalsCache.get(token)!;
+  const tokenDecimals = await fetchTokenDecimals(walletClient, token);
   const parsedAmount = parseUnits(amount.toString(), tokenDecimals);
   log.info(`[INFO] Parsed amount: ${parsedAmount.toString()} units`);
   return parsedAmount;
@@ -56,6 +56,10 @@ export const checkAndApproveAllowance = async (
   spender: Address,
   amount: bigint,
 ): Promise<void> => {
+  if (token === TOKEN.BERA) {
+    return;
+  }
+
   log.info(`[INFO] Checking allowance for ${token} to spender ${spender}`);
 
   // Fetch current allowance
@@ -65,8 +69,6 @@ export const checkAndApproveAllowance = async (
     functionName: "allowance",
     args: [walletClient.account.address, spender],
   });
-
-  log.info(`[INFO] Current allowance: ${allowance}`);
 
   if (BigInt(allowance) < amount) {
     log.info(

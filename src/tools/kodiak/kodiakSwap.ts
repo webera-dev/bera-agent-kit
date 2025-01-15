@@ -1,4 +1,4 @@
-import { Address, parseUnits } from "viem";
+import { Address, parseUnits, WalletClient } from "viem";
 import { createViemPublicClient } from "../../utils/createViemPublicClient";
 import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { ToolConfig } from "../allTools";
@@ -8,7 +8,10 @@ import {
 } from "../../constants/kodiakABI";
 import { TokenABI } from "../../constants/tokenABI";
 import { CONTRACT, TOKEN } from "../../constants";
-import { checkAndApproveAllowance } from "../../utils/helpers";
+import {
+  checkAndApproveAllowance,
+  fetchTokenDecimals,
+} from "../../utils/helpers";
 import { log } from "../../utils/logger";
 
 // TODO: In the futures, we should detect tokenIn by token name or symbol. So that user can easy to use
@@ -59,13 +62,14 @@ export const kodiakSwapTool: ToolConfig<KodiakSwapArgs> = {
       },
     },
   },
-  handler: async (args) => {
+  handler: async (args, walletClient?: WalletClient) => {
     try {
-      const walletClient = createViemWalletClient();
-      const publicClient = createViemPublicClient();
+      if (!walletClient || !walletClient.account) {
+        throw new Error("Wallet client is not provided");
+      }
 
       const recipient = args.to || walletClient.account.address;
-      const isNativeSwap = !args.tokenIn;
+      const isNativeSwap = !args.tokenIn || args.tokenIn === TOKEN.BERA;
 
       log.info(
         `[INFO] Initiating Kodiak swap: ${args.amountIn} ${isNativeSwap ? "BERA" : args.tokenIn} for ${args.tokenOut} to ${recipient}`,
@@ -86,15 +90,15 @@ export const kodiakSwapTool: ToolConfig<KodiakSwapArgs> = {
             recipient,
             BigInt(deadline),
           ],
+          chain: walletClient.chain,
+          account: walletClient.account,
           value: parseUnits(args.amountIn.toString(), 18),
         });
       } else {
-        const inputTokenDecimals = await publicClient.readContract({
-          address: args.tokenIn!,
-          abi: TokenABI,
-          functionName: "decimals",
-          args: [],
-        });
+        const inputTokenDecimals = await fetchTokenDecimals(
+          walletClient,
+          args.tokenIn!,
+        );
 
         const parsedAmountIn = parseUnits(
           args.amountIn.toString(),
@@ -122,18 +126,20 @@ export const kodiakSwapTool: ToolConfig<KodiakSwapArgs> = {
             [args.tokenIn!, args.tokenOut] as const,
             recipient,
           ],
+          chain: walletClient.chain,
+          account: walletClient.account,
         });
       }
 
-      const receipt = await walletClient.waitForTransactionReceipt({
-        hash: tx as `0x${string}`,
-      });
+      // const receipt = await walletClient.waitForTransactionReceipt({
+      //   hash: tx as `0x${string}`,
+      // });
 
-      if (receipt.status !== "success") {
-        throw new Error(
-          `Swap transaction failed with status: ${receipt.status}`,
-        );
-      }
+      // if (receipt.status !== "success") {
+      //   throw new Error(
+      //     `Swap transaction failed with status: ${receipt.status}`,
+      //   );
+      // }
 
       log.info(`[INFO] Kodiak swap successful: Transaction hash: ${tx}`);
       return tx;

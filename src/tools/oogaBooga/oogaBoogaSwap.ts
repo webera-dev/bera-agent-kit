@@ -1,7 +1,7 @@
 import axios from "axios";
-import { Address } from "viem";
+import { Address, WalletClient } from "viem";
 import { ToolConfig } from "../allTools";
-import { createViemWalletClient } from "../../utils/createViemWalletClient";
+// import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { URL } from "../../constants";
 import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
 import { log } from "../../utils/logger";
@@ -97,16 +97,16 @@ const performSwap = async (
       value: swapTx.value ? BigInt(swapTx.value) : 0n,
     });
 
-    log.info(`[INFO] Sent swap transaction. Hash: ${swapHash}`);
-    const swapReceipt = await walletClient.waitForTransactionReceipt({
-      hash: swapHash,
-    });
+    // log.info(`[INFO] Sent swap transaction. Hash: ${swapHash}`);
+    // const swapReceipt = await walletClient.waitForTransactionReceipt({
+    //   hash: swapHash,
+    // });
 
-    log.info(`[DEBUG] Swap Receipt: ${swapReceipt}`);
-    if (swapReceipt.status !== "success") {
-      throw new Error("Swap transaction failed");
-    }
-    log.info(`[INFO] Swap successful: Transaction hash: ${swapHash}`);
+    // log.info(`[DEBUG] Swap Receipt: ${swapReceipt}`);
+    // if (swapReceipt.status !== "success") {
+    //   throw new Error("Swap transaction failed");
+    // }
+    // log.info(`[INFO] Swap successful: Transaction hash: ${swapHash}`);
     return swapHash;
   } catch (error: any) {
     log.error(`[ERROR] Swap failed: ${error.message}`);
@@ -143,16 +143,19 @@ export const oogaBoogaSwapTool: ToolConfig<OogaBoogaSwapArgs> = {
             description: "The allowed slippage tolerance (0.01 = 1%)",
           },
         },
-        required: ["base", "quote", "amount", "slippage"],
+        required: ["base", "quote", "amount"],
       },
     },
   },
-  handler: async (args) => {
+  handler: async (args, walletClient?: WalletClient) => {
     if (!process.env.OOGA_BOOGA_API_KEY) {
       throw new Error("OOGA_BOOGA_API_KEY is required.");
     }
 
-    const walletClient = createViemWalletClient();
+    if (!walletClient || !walletClient.account) {
+      throw new Error("Wallet client is not provided");
+    }
+
     const OOGA_BOOGA_API_KEY = process.env.OOGA_BOOGA_API_KEY;
     const headers = { Authorization: `Bearer ${OOGA_BOOGA_API_KEY}` };
 

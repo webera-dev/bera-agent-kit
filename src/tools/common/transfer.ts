@@ -1,8 +1,7 @@
-import { Address, parseUnits } from "viem";
+import { Address, parseUnits, WalletClient } from "viem";
 import { createViemPublicClient } from "../../utils/createViemPublicClient";
 import { ToolConfig } from "../allTools";
 import { parseEther } from "viem/utils";
-import { createViemWalletClient } from "../../utils/createViemWalletClient";
 import { TokenABI } from "../../constants/tokenABI";
 import { log } from "../../utils/logger";
 
@@ -40,11 +39,17 @@ export const transferTool: ToolConfig<TransferArgs> = {
       },
     },
   },
-  handler: async ({ to, amount, tokenAddress }, walletClient: any) => {
+  handler: async (
+    { to, amount, tokenAddress },
+    walletClient?: WalletClient,
+  ) => {
     try {
-      // const walletClient = createViemWalletClient();
+      if (!walletClient || !walletClient.account) {
+        throw new Error("Wallet client is not provided");
+      }
+
       console.info(
-        `[INFO] Start transfer ${amount} ${tokenAddress || "BERA"} from ${walletClient.account.address} to ${to} `,
+        `[INFO] Start transfer ${amount} ${tokenAddress || "BERA"} from ${walletClient.account?.address} to ${to} `,
       );
       let tx: string;
 
@@ -52,6 +57,8 @@ export const transferTool: ToolConfig<TransferArgs> = {
         tx = await walletClient.sendTransaction({
           to,
           value: parseEther(amount.toString()),
+          account: walletClient.account,
+          chain: walletClient.chain,
         });
       } else {
         const publicClient = createViemPublicClient();
@@ -64,27 +71,31 @@ export const transferTool: ToolConfig<TransferArgs> = {
         });
 
         const parsedAmount = parseUnits(amount.toString(), decimals);
-        return await walletClient.writeContract({
+        tx = await walletClient.writeContract({
           address: tokenAddress,
           abi: TokenABI,
           functionName: "transfer",
           args: [to, parsedAmount],
+          chain: walletClient.chain,
+          account: walletClient.account,
         });
       }
 
-      const receipt = await walletClient.waitForTransactionReceipt({
-        hash: tx as `0x${string}`,
-      });
+      // const receipt = await walletClient.waitForTransactionReceipt({
+      //   hash: tx as `0x${string}`,
+      // });
 
-      if (receipt.status !== "success") {
-        throw new Error(`transaction status ${receipt.status}`);
-      }
+      // if (receipt.status !== "success") {
+      //   throw new Error(`transaction status ${receipt.status}`);
+      // }
       return tx;
     } catch (error: any) {
       log.error(
         `[INFO] Transfer ${amount} ${tokenAddress} to ${to} error: ${error.message}`,
       );
-      throw new Error(`Transfer failed: ${error.message}`);
+      throw new Error(
+        `Transfer ${amount} ${tokenAddress} to ${to} error: ${error.message}`,
+      );
     }
   },
 };

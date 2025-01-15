@@ -36,7 +36,6 @@ export interface ToolConfig<T = any, W = WalletClient> {
 export function createTools(
   walletClient?: WalletClient,
 ): Record<string, ToolConfig<any, WalletClient>> {
-  console.log("walletClient", walletClient);
   return {
     get_balance: getBalanceTool,
     transfer: transferTool,
