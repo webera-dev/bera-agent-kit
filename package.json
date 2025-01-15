@@ -1,6 +1,6 @@
 {
   "name": "bera-agent-kit",
-  "version": "0.0.3",
+  "version": "0.0.2",
   "description": "Open-source agent kit for interacting with Berachain protocols",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -62,7 +62,7 @@
   "homepage": "https://github.com/Webera-Finance/bera-agent-kit#readme",
   "scripts": {
     "clean": "rm -rf dist",
-    "generate-dist-package-json": "node -e \"const pkg = require('./package.json'); const distPkg = { name: pkg.name, version: pkg.version, description: pkg.description, main: 'index.js', module: 'index.mjs', types: 'index.d.ts', exports: { '.': { types: './index.d.ts', import: './index.mjs', require: './index.js', default: './index.js' }, './package.json': './package.json', './utils': { types: './utils/index.d.ts', import: './utils/index.mjs', require: './utils/index.js' }, './utils/createViemWalletClient': { types: './utils/createViemWalletClient.d.ts', import: './utils/createViemWalletClient.mjs', require: './utils/createViemWalletClient.js' }, './tools': { types: './tools/index.d.ts', import: './tools/index.mjs', require: './tools/index.js' }, './ai-agents': { types: './ai-agents/index.d.ts', import: './ai-agents/index.mjs', require: './ai-agents/index.js' } }, dependencies: { openai: '^4.73.1', viem: '^2.21.57', winston: '^3.17.0' } }; require('fs').writeFileSync('./dist/package.json', JSON.stringify(distPkg, null, 2));\"",
+    "generate-dist-package-json": "node scripts/generate-dist-package.js",
     "build": "npm run clean && tsc && npm run generate-dist-package-json",
     "prepare": "npm run build",
     "test": "mocha -r ts-node/register 'test/**/*.spec.ts'",
