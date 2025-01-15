@@ -23,7 +23,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: yarn install 
+        run: yarn install
 
       - name: Run linting
         run: yarn lint
@@ -39,17 +39,31 @@ jobs:
 
       - name: Push to releases branch
         run: |
+          # Configure git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # Create a clean releases branch
-          git checkout --orphan releases
-          # Remove everything
+          
+          # Create and switch to a new temp branch
+          git checkout --orphan temp_releases
+          
+          # Remove all files from git tracking
           git rm -rf .
-          # Add only dist directory
-          cp -r dist/* .
-          git add .
+          
+          # Create dist directory
+          mkdir -p dist
+          
+          # Copy package.json and update it
+          cp package.json dist/
+          
+          # Stage only the dist directory
+          git add dist
+          
           # Create commit
-          git commit -m "Release ${{ github.ref_name }}"
+          git commit -m "Release ${{ github.ref_name }} - dist files"
+          
+          # Rename branch
+          git branch -M temp_releases releases
+          
           # Force push to releases branch
           git push origin releases --force
 
