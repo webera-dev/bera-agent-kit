@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -21,36 +23,24 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: yarn install 
+        run: yarn install
 
       - name: Run linting
-        run: yarn lint || exit 1
+        run: yarn lint
 
       - name: Run formatting check
-        run: yarn format --check || exit 1
+        run: yarn format --check
 
       - name: Run tests
-        run: yarn test || exit 1
+        run: yarn test
 
       - name: Build SDK
-        run: yarn build || exit 1
-
-      - name: Create release branch
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git checkout -b release
-          git add dist -f
-          git commit -m "Release ${{ github.ref_name }}"
-          git push origin release --force
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        run: yarn build
+      
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          files: |
-            dist/**/*
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          force_orphan: true
