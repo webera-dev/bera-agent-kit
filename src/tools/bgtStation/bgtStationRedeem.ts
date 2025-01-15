@@ -1,9 +1,9 @@
-import { ToolConfig } from "../allTools.js";
-import { createViemWalletClient } from "../../utils/createViemWalletClient";
-import { BGTABI } from "../../constants/tokenABI";
-import { TOKEN } from "../../constants";
-import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
-import { log } from "../../utils/logger";
+import { ToolConfig } from '../allTools';
+import { createViemWalletClient } from '../../utils/createViemWalletClient';
+import { BGTABI } from '../../constants/tokenABI';
+import { TOKEN } from '../../constants';
+import { fetchTokenDecimalsAndParseAmount } from '../../utils/helpers';
+import { log } from '../../utils/logger';
 
 interface BGTStationRedeemArgs {
   receiver?: string; // Address of the receiver for redemption (optional)
@@ -12,40 +12,40 @@ interface BGTStationRedeemArgs {
 
 export const bgtStationRedeemTool: ToolConfig<BGTStationRedeemArgs> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "bgt_station_redeem",
-      description: "Redeem BGT to receiver, defaults to wallet client account",
+      name: 'bgt_station_redeem',
+      description: 'Redeem BGT to receiver, defaults to wallet client account',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           receiver: {
-            type: ["string", "null"],
-            pattern: "^0x[a-fA-F0-9]{40}$",
+            type: ['string', 'null'],
+            pattern: '^0x[a-fA-F0-9]{40}$',
             description:
-              "The receiver address to send redeemed BGT. Defaults to wallet client account if null.",
+              'The receiver address to send redeemed BGT. Defaults to wallet client account if null.',
           },
           amount: {
-            type: "number",
+            type: 'number',
             minimum: 0,
-            description: "The amount of BGT to redeem.",
+            description: 'The amount of BGT to redeem.',
           },
         },
-        required: ["amount"],
+        required: ['amount'],
       },
     },
   },
-  handler: async (args) => {
+  handler: async args => {
     try {
       if (args.amount === undefined || args.amount <= 0) {
-        throw new Error("A positive amount is required.");
+        throw new Error('A positive amount is required.');
       }
 
       const walletClient = createViemWalletClient();
 
       const receiver = args.receiver || walletClient.account.address;
 
-      log.info("[INFO] Parsing amount based on token decimals...");
+      log.info('[INFO] Parsing amount based on token decimals...');
       const parsedAmount = await fetchTokenDecimalsAndParseAmount(
         walletClient,
         TOKEN.BGT,
@@ -56,17 +56,17 @@ export const bgtStationRedeemTool: ToolConfig<BGTStationRedeemArgs> = {
       const redeemTx = await walletClient.writeContract({
         address: TOKEN.BGT,
         abi: BGTABI,
-        functionName: "redeem",
+        functionName: 'redeem',
         args: [receiver as `0x${string}`, parsedAmount],
       });
 
-      log.info("[INFO] Waiting for transaction receipt...");
+      log.info('[INFO] Waiting for transaction receipt...');
       const receipt = await walletClient.waitForTransactionReceipt({
         hash: redeemTx as `0x${string}`,
       });
 
-      if (receipt.status !== "success") {
-        throw new Error("Redemption transaction failed.");
+      if (receipt.status !== 'success') {
+        throw new Error('Redemption transaction failed.');
       }
 
       log.info(

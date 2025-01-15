@@ -1,87 +1,103 @@
-import "dotenv/config";
-import OpenAI from "openai";
-import readline from "readline";
-import { createAssistant } from "./ai-agents/createAssistant";
-import { createThread } from "./ai-agents/createThread";
-import { createRun } from "./ai-agents/createRun";
-import { performRun } from "./ai-agents/performRun";
-import { Thread } from "openai/resources/beta/threads";
-import { Assistant } from "openai/resources/beta/assistants";
-import { log } from "./utils/logger";
+// Main exports
+import 'dotenv/config';
+import OpenAI, { ClientOptions } from 'openai';
+import { Thread } from 'openai/resources/beta/threads';
+import { Assistant } from 'openai/resources/beta/assistants';
+import { WalletClient } from 'viem';
 
-// Initialize OpenAI client
-const openAIClient = new OpenAI();
+// Agent-related imports
+import { createAssistant } from './ai-agents/createAssistant';
+import { createThread } from './ai-agents/createThread';
+import { createRun } from './ai-agents/createRun';
+import { performRun } from './ai-agents/performRun';
+import { log } from './utils/logger';
+import { createViemWalletClient } from './utils/createViemWalletClient';
 
-// Create a readline interface
-function createReadlineInterface() {
-  return readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+export interface BeraAgentConfig {
+  walletClient: WalletClient;
+  openAIConfig?: ClientOptions;
 }
 
-// Type-safe promise-based question function
-function askQuestion(rl: readline.Interface, query: string): Promise<string> {
-  return new Promise((resolve) => rl.question(query, resolve));
-}
+export class BeraAgent {
+  private openAIClient: OpenAI;
+  private assistant: Assistant | null = null;
+  private thread: Thread | null = null;
+  private walletClient: WalletClient;
 
-// Handle chat conversation
-async function handleChat(thread: Thread, assistant: Assistant): Promise<void> {
-  const rl = createReadlineInterface();
-  log.info('Chat started! Type "exit" to end the conversation.');
+  constructor(config: BeraAgentConfig) {
+    this.openAIClient = new OpenAI(config.openAIConfig);
 
-  try {
-    while (true) {
-      const userInput = await askQuestion(rl, "\nYou: ");
-
-      if (userInput.trim().toLowerCase() === "exit") {
-        log.info("Exiting the chat...");
-        break;
-      }
-
-      try {
-        await openAIClient.beta.threads.messages.create(thread.id, {
-          role: "user",
-          content: userInput,
-        });
-
-        const run = await createRun(openAIClient, thread, assistant.id);
-        const result = await performRun(run, openAIClient, thread);
-
-        if (result?.type === "text") {
-          log.info(`\nBeraBot: ${result.text.value}`);
-        }
-      } catch (err) {
-        log.error(
-          `Error during message processing: ${err instanceof Error ? err.message : "Unknown error"}`,
-        );
-      }
-    }
-  } finally {
-    rl.close();
+    // Use provided wallet client or create a default one
+    this.walletClient = config.walletClient || createViemWalletClient();
   }
-}
 
-// Main function to initialize resources and start the chat
-async function main(): Promise<void> {
-  try {
-    log.info("Initializing resources...");
-    const assistant = await createAssistant(openAIClient);
-    const thread = await createThread(openAIClient);
-
-    await handleChat(thread, assistant);
-  } catch (err) {
-    log.error(
-      `Error initializing chat: ${err instanceof Error ? err.message : "Unknown error"}`,
+  async initialize(): Promise<void> {
+    this.assistant = await createAssistant(
+      this.openAIClient,
+      this.walletClient,
     );
-    process.exit(1);
+
+    this.thread = await createThread(this.openAIClient);
+  }
+
+  async sendMessage(message: string): Promise<string> {
+    if (!this.assistant || !this.thread) {
+      throw new Error('BeraAgent not initialized. Call initialize() first.');
+    }
+    log.info(
+      `Sending message: ${message} for wallet ${this.walletClient.account?.address}`,
+    );
+    await this.openAIClient.beta.threads.messages.create(this.thread.id, {
+      role: 'user',
+      content: message,
+    });
+
+    const run = await createRun(
+      this.openAIClient,
+      this.thread,
+      this.assistant.id,
+    );
+    const result = await performRun(
+      run,
+      this.openAIClient,
+      this.thread,
+      this.walletClient,
+    );
+
+    if (result?.type === 'text') {
+      return result.text.value;
+    }
+
+    throw new Error('Unexpected response format');
+  }
+
+  getAssistant(): Assistant | null {
+    return this.assistant;
+  }
+
+  getThread(): Thread | null {
+    return this.thread;
+  }
+
+  getWalletClient(): WalletClient {
+    return this.walletClient;
   }
 }
 
-// Entry point
-main().catch((err) => {
-  log.error(
-    `Unhandled error: ${err instanceof Error ? err.message : "Unknown error"}`,
-  );
-  process.exit(1);
-});
+// Utility exports
+export { createViemWalletClient } from './utils/createViemWalletClient';
+export { createViemPublicClient } from './utils/createViemPublicClient';
+export { log } from './utils/logger';
+
+// Tool exports
+export { createTools } from './tools/allTools';
+
+// Agent-related exports
+export { createAssistant } from './ai-agents/createAssistant';
+export { createThread } from './ai-agents/createThread';
+export { createRun } from './ai-agents/createRun';
+export { performRun } from './ai-agents/performRun';
+
+// Constants and types
+export * from './constants';
+export * from './tools/allTools';

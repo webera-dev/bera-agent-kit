@@ -1,5 +1,5 @@
-import OpenAI from "openai";
-import { Thread } from "openai/resources/beta/threads";
+import OpenAI from 'openai';
+import { Thread } from 'openai/resources/beta/threads';
 /**
  * This function is particularly useful in applications that need to initiate conversations with OpenAI
  * @param client - OpenAI client
@@ -14,7 +14,7 @@ export async function createThread(
   const thread = await client.beta.threads.create();
   if (message) {
     await client.beta.threads.messages.create(thread.id, {
-      role: "user",
+      role: 'user',
       content: message,
     });
   }

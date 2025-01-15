@@ -1,14 +1,14 @@
-import { Address, parseUnits } from "viem";
-import { createViemPublicClient } from "../../utils/createViemPublicClient";
-import { createViemWalletClient } from "../../utils/createViemWalletClient";
-import { ToolConfig } from "../allTools.js";
-import { KodiakUniswapV2Router02ABI } from "../../constants/kodiakABI";
-import { CONTRACT } from "../../constants";
+import { Address, parseUnits } from 'viem';
+import { createViemPublicClient } from '../../utils/createViemPublicClient';
+import { createViemWalletClient } from '../../utils/createViemWalletClient';
+import { ToolConfig } from '../allTools';
+import { KodiakUniswapV2Router02ABI } from '../../constants/kodiakABI';
+import { CONTRACT } from '../../constants';
 import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
-} from "../../utils/helpers";
-import { log } from "../../utils/logger";
+} from '../../utils/helpers';
+import { log } from '../../utils/logger';
 
 interface KodiakAddLiquidityArgs {
   tokenA: Address;
@@ -22,57 +22,57 @@ interface KodiakAddLiquidityArgs {
 
 export const kodiakAddLiquidityTool: ToolConfig<KodiakAddLiquidityArgs> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "kodiak_add_liquidity",
-      description: "Add liquidity to a liquidity pool on Kodiak",
+      name: 'kodiak_add_liquidity',
+      description: 'Add liquidity to a liquidity pool on Kodiak',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           tokenA: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Address of the first token",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'Address of the first token',
           },
           tokenB: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Address of the second token",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'Address of the second token',
           },
           amountADesired: {
-            type: "number",
-            description: "The desired amount of token A",
+            type: 'number',
+            description: 'The desired amount of token A',
           },
           amountBDesired: {
-            type: "number",
-            description: "The desired amount of token B",
+            type: 'number',
+            description: 'The desired amount of token B',
           },
           amountAMin: {
-            type: "number",
-            description: "The minimum amount of token A",
+            type: 'number',
+            description: 'The minimum amount of token A',
           },
           amountBMin: {
-            type: "number",
-            description: "The minimum amount of token B",
+            type: 'number',
+            description: 'The minimum amount of token B',
           },
           to: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
             description: "The recipient's address (optional)",
           },
         },
         required: [
-          "tokenA",
-          "tokenB",
-          "amountADesired",
-          "amountBDesired",
-          "amountAMin",
-          "amountBMin",
+          'tokenA',
+          'tokenB',
+          'amountADesired',
+          'amountBDesired',
+          'amountAMin',
+          'amountBMin',
         ],
       },
     },
   },
-  handler: async (args) => {
+  handler: async args => {
     try {
       const walletClient = createViemWalletClient();
       const publicClient = createViemPublicClient();
@@ -126,7 +126,7 @@ export const kodiakAddLiquidityTool: ToolConfig<KodiakAddLiquidityArgs> = {
       const tx = await walletClient.writeContract({
         address: CONTRACT.KodiakSwapRouter02,
         abi: KodiakUniswapV2Router02ABI,
-        functionName: "addLiquidity",
+        functionName: 'addLiquidity',
         args: [
           args.tokenA,
           args.tokenB,
@@ -143,7 +143,7 @@ export const kodiakAddLiquidityTool: ToolConfig<KodiakAddLiquidityArgs> = {
         hash: tx as `0x${string}`,
       });
 
-      if (receipt.status !== "success") {
+      if (receipt.status !== 'success') {
         throw new Error(
           `Add liquidity transaction failed with status: ${receipt.status}`,
         );

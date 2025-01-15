@@ -1,12 +1,12 @@
-import { Address, parseUnits } from "viem";
-import { ToolConfig } from "../allTools.js";
-import { CONTRACT, TOKEN } from "../../constants/index.js";
-import { createViemWalletClient } from "../../utils/createViemWalletClient.js";
+import { Address, parseUnits } from 'viem';
+import { ToolConfig } from '../allTools';
+import { CONTRACT, TOKEN } from '../../constants/index';
+import { createViemWalletClient } from '../../utils/createViemWalletClient';
 import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
-} from "../../utils/helpers.js";
-import { InfraredVaultABI } from "../../constants/infraredABI.js";
+} from '../../utils/helpers';
+import { InfraredVaultABI } from '../../constants/infraredABI';
 
 interface InfraredWithdrawStakedIBGTArgs {
   withdrawAmount: number;
@@ -15,19 +15,19 @@ interface InfraredWithdrawStakedIBGTArgs {
 export const infraredWithdrawStakedIBGTTool: ToolConfig<InfraredWithdrawStakedIBGTArgs> =
   {
     definition: {
-      type: "function",
+      type: 'function',
       function: {
-        name: "infrared_withdraw_staked_ibgt",
-        description: "Withdraw staked iBGT on Infrared",
+        name: 'infrared_withdraw_staked_ibgt',
+        description: 'Withdraw staked iBGT on Infrared',
         parameters: {
-          type: "object",
+          type: 'object',
           properties: {
             withdrawAmount: {
-              type: "number",
-              description: "The amount of iBGT to withdraw from Infrared",
+              type: 'number',
+              description: 'The amount of iBGT to withdraw from Infrared',
             },
           },
-          required: ["withdrawAmount"],
+          required: ['withdrawAmount'],
         },
       },
     },
@@ -51,7 +51,7 @@ export const infraredWithdrawStakedIBGTTool: ToolConfig<InfraredWithdrawStakedIB
         const stakedIBGT = (await walletClient.readContract({
           address: infraredIBGTVaultAddress,
           abi: InfraredVaultABI,
-          functionName: "balanceOf",
+          functionName: 'balanceOf',
           args: [walletClient.account.address],
         })) as bigint;
 
@@ -70,7 +70,7 @@ export const infraredWithdrawStakedIBGTTool: ToolConfig<InfraredWithdrawStakedIB
         const tx = await walletClient.writeContract({
           address: infraredIBGTVaultAddress,
           abi: InfraredVaultABI,
-          functionName: "withdraw",
+          functionName: 'withdraw',
           args: [parsedWithdrawAmount],
         });
 
@@ -78,7 +78,7 @@ export const infraredWithdrawStakedIBGTTool: ToolConfig<InfraredWithdrawStakedIB
           hash: tx as `0x${string}`,
         });
 
-        if (receipt.status !== "success") {
+        if (receipt.status !== 'success') {
           throw new Error(
             `Withdraw transaction failed with status: ${receipt.status}`,
           );

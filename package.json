@@ -1,17 +1,79 @@
 {
   "name": "bera-agent-kit",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/Webera-Finance/bera-agent-kit",
+  "version": "0.0.3",
+  "description": "Open-source agent kit for interacting with Berachain protocols",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json",
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.js"
+    },
+    "./utils/createViemWalletClient": {
+      "types": "./dist/utils/createViemWalletClient.d.ts",
+      "import": "./dist/utils/createViemWalletClient.mjs",
+      "require": "./dist/utils/createViemWalletClient.js"
+    },
+    "./tools": {
+      "types": "./dist/tools/index.d.ts",
+      "import": "./dist/tools/index.mjs",
+      "require": "./dist/tools/index.js"
+    },
+    "./ai-agents": {
+      "types": "./dist/ai-agents/index.d.ts",
+      "import": "./dist/ai-agents/index.mjs",
+      "require": "./dist/ai-agents/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "examples"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Webera-Finance/bera-agent-kit"
+  },
+  "keywords": [
+    "berachain",
+    "agent",
+    "blockchain",
+    "defi",
+    "automation"
+  ],
+  "author": "Webera Finance",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Webera-Finance/bera-agent-kit/issues"
+  },
+  "homepage": "https://github.com/Webera-Finance/bera-agent-kit#readme",
   "scripts": {
-    "build": "tsc",
-    "test": "npx mocha -r ts-node/register 'test/**/*.spec.ts'",
-    "test:file": "npx mocha -r ts-node/register",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "clean": "rm -rf dist",
+    "generate-dist-package-json": "node -e \"const pkg = require('./package.json'); const distPkg = { name: pkg.name, version: pkg.version, description: pkg.description, main: 'index.js', module: 'index.mjs', types: 'index.d.ts', exports: { '.': { types: './index.d.ts', import: './index.mjs', require: './index.js', default: './index.js' }, './package.json': './package.json', './utils': { types: './utils/index.d.ts', import: './utils/index.mjs', require: './utils/index.js' }, './utils/createViemWalletClient': { types: './utils/createViemWalletClient.d.ts', import: './utils/createViemWalletClient.mjs', require: './utils/createViemWalletClient.js' }, './tools': { types: './tools/index.d.ts', import: './tools/index.mjs', require: './tools/index.js' }, './ai-agents': { types: './ai-agents/index.d.ts', import: './ai-agents/index.mjs', require: './ai-agents/index.js' } }, dependencies: { openai: '^4.73.1', viem: '^2.21.57', winston: '^3.17.0' } }; require('fs').writeFileSync('./dist/package.json', JSON.stringify(distPkg, null, 2));\"",
+    "build": "npm run clean && tsc && npm run generate-dist-package-json",
+    "prepare": "npm run build",
+    "test": "mocha -r ts-node/register 'test/**/*.spec.ts'",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "docs": "typedoc src --out docs",
-    "start": "node dist/index.js"
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^1.0.0",
@@ -42,13 +104,9 @@
     "@types/sinon": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
-    "eslint": "^9.17.0",
+    "eslint": "^8.56.0",
     "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.19.0"
-  },
-  "resolutions": {
-    "whatwg-url": "^14.1.0"
+    "typescript": "^5.7.2"
   }
 }

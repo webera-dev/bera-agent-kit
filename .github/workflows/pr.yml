@@ -1,0 +1,32 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: yarn install 
+
+      - name: Run linting
+        run: yarn lint || exit 1
+
+      - name: Run formatting check
+        run: yarn format --check || exit 1
+
+      - name: Run tests
+        run: yarn test || exit 1
+
+      - name: Build SDK
+        run: yarn build || exit 1 

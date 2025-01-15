@@ -1,10 +1,10 @@
-import { Address } from "viem";
-import { ToolConfig } from "../allTools";
-import { BEND_ABI } from "../../constants/bendABI";
-import { CONTRACT } from "../../constants/index";
-import { createViemWalletClient } from "../../utils/createViemWalletClient";
-import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
-import { log } from "../../utils/logger";
+import { Address } from 'viem';
+import { ToolConfig } from '../allTools';
+import { BEND_ABI } from '../../constants/bendABI';
+import { CONTRACT } from '../../constants/index';
+import { createViemWalletClient } from '../../utils/createViemWalletClient';
+import { fetchTokenDecimalsAndParseAmount } from '../../utils/helpers';
+import { log } from '../../utils/logger';
 
 interface BendBorrowArgs {
   asset: Address;
@@ -14,34 +14,34 @@ interface BendBorrowArgs {
 
 export const bendBorrowTool: ToolConfig<BendBorrowArgs> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "bend_borrow",
-      description: "Borrow tokens from Bend Protocol",
+      name: 'bend_borrow',
+      description: 'Borrow tokens from Bend Protocol',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           asset: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Token address to borrow",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'Token address to borrow',
           },
           amount: {
-            type: "number",
-            description: "The amount of tokens to borrow",
+            type: 'number',
+            description: 'The amount of tokens to borrow',
           },
           interestRateMode: {
-            type: "number",
+            type: 'number',
             enum: [1, 2],
-            description: "Interest rate mode (1 for stable, 2 for variable)",
+            description: 'Interest rate mode (1 for stable, 2 for variable)',
             default: 2,
           },
         },
-        required: ["asset", "amount"],
+        required: ['asset', 'amount'],
       },
     },
   },
-  handler: async (args) => {
+  handler: async args => {
     try {
       const walletClient = createViemWalletClient();
       const onBehalfOf = walletClient.account.address;
@@ -59,7 +59,7 @@ export const bendBorrowTool: ToolConfig<BendBorrowArgs> = {
       const hash = await walletClient.writeContract({
         address: CONTRACT.Bend,
         abi: BEND_ABI,
-        functionName: "borrow",
+        functionName: 'borrow',
         args: [
           args.asset,
           parsedAmount,

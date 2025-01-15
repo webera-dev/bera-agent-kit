@@ -1,13 +1,13 @@
-import { Address } from "viem";
-import { ToolConfig } from "../allTools.js";
-import { formatEther } from "viem";
-import { createViemPublicClient } from "../../utils/createViemPublicClient";
-import { TOKEN } from "../../constants/index.js";
-import { TokenABI } from "../../constants/tokenABI.js";
+import { Address } from 'viem';
+import { ToolConfig } from '../allTools';
+import { formatEther } from 'viem';
+import { createViemPublicClient } from '../../utils/createViemPublicClient';
+import { TOKEN } from '../../constants/index';
+import { TokenABI } from '../../constants/tokenABI';
 import {
   fetchTokenDecimalsAndFormatAmount,
   fetchTokenDecimalsAndParseAmount,
-} from "../../utils/helpers.js";
+} from '../../utils/helpers';
 
 interface GetTokenBalanceArgs {
   wallet: Address;
@@ -16,24 +16,24 @@ interface GetTokenBalanceArgs {
 
 export const getTokenBalanceTool: ToolConfig<GetTokenBalanceArgs> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "get_token_balance",
-      description: "Get the token balance of a wallet",
+      name: 'get_token_balance',
+      description: 'Get the token balance of a wallet',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           wallet: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "The wallet address to get the balance of",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'The wallet address to get the balance of',
           },
           tokenName: {
-            type: "string",
-            description: "The name of the token to get the balance",
+            type: 'string',
+            description: 'The name of the token to get the balance',
           },
         },
-        required: ["wallet", "tokenName"],
+        required: ['wallet', 'tokenName'],
       },
     },
   },
@@ -42,18 +42,18 @@ export const getTokenBalanceTool: ToolConfig<GetTokenBalanceArgs> = {
       const { wallet, tokenName } = args;
 
       if (!wallet) {
-        throw new Error("Wallet address is required");
+        throw new Error('Wallet address is required');
       }
 
       if (!tokenName) {
-        throw new Error("Token name is required");
+        throw new Error('Token name is required');
       }
 
       const publicClient = createViemPublicClient();
 
       // find the token address from the token name
       const foundTokenName = Object.keys(TOKEN).find(
-        (key) => key.toLowerCase() === tokenName.toLowerCase(),
+        key => key.toLowerCase() === tokenName.toLowerCase(),
       );
 
       if (!foundTokenName) {
@@ -69,7 +69,7 @@ export const getTokenBalanceTool: ToolConfig<GetTokenBalanceArgs> = {
       const rawTokenBalanceOfWallet = await publicClient.readContract({
         address: tokenAddress,
         abi: TokenABI,
-        functionName: "balanceOf",
+        functionName: 'balanceOf',
         args: [wallet],
       });
 

@@ -1,10 +1,10 @@
-import { Address } from "viem";
-import { ToolConfig } from "../allTools";
-import { BEND_ABI } from "../../constants/bendABI";
-import { CONTRACT } from "../../constants/index";
-import { createViemWalletClient } from "../../utils/createViemWalletClient";
-import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
-import { log } from "../../utils/logger";
+import { Address } from 'viem';
+import { ToolConfig } from '../allTools';
+import { BEND_ABI } from '../../constants/bendABI';
+import { CONTRACT } from '../../constants/index';
+import { createViemWalletClient } from '../../utils/createViemWalletClient';
+import { fetchTokenDecimalsAndParseAmount } from '../../utils/helpers';
+import { log } from '../../utils/logger';
 
 interface BendWithdrawArgs {
   asset: Address;
@@ -13,28 +13,28 @@ interface BendWithdrawArgs {
 
 export const bendWithdrawTool: ToolConfig<BendWithdrawArgs> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "bend_withdraw",
-      description: "Withdraw tokens from Bend Protocol",
+      name: 'bend_withdraw',
+      description: 'Withdraw tokens from Bend Protocol',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           asset: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Token address to withdraw",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'Token address to withdraw',
           },
           amount: {
-            type: "number",
-            description: "The amount of tokens to withdraw",
+            type: 'number',
+            description: 'The amount of tokens to withdraw',
           },
         },
-        required: ["asset", "amount"],
+        required: ['asset', 'amount'],
       },
     },
   },
-  handler: async (args) => {
+  handler: async args => {
     try {
       const walletClient = createViemWalletClient();
       const onBehalfOf = walletClient.account.address;
@@ -50,7 +50,7 @@ export const bendWithdrawTool: ToolConfig<BendWithdrawArgs> = {
       const hash = await walletClient.writeContract({
         address: CONTRACT.Bend,
         abi: BEND_ABI,
-        functionName: "withdraw",
+        functionName: 'withdraw',
         args: [args.asset, parsedAmount, onBehalfOf],
       });
 

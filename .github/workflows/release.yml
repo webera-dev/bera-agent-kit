@@ -1,0 +1,56 @@
+name: Release SDK
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: yarn install 
+
+      - name: Run linting
+        run: yarn lint || exit 1
+
+      - name: Run formatting check
+        run: yarn format --check || exit 1
+
+      - name: Run tests
+        run: yarn test || exit 1
+
+      - name: Build SDK
+        run: yarn build || exit 1
+
+      - name: Create release branch
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout -b release
+          git add dist -f
+          git commit -m "Release ${{ github.ref_name }}"
+          git push origin release --force
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/**/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

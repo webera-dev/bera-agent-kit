@@ -1,13 +1,13 @@
-import { Address } from "viem";
-import { ToolConfig } from "../allTools";
-import { BEND_ABI } from "../../constants/bendABI";
-import { CONTRACT } from "../../constants/index";
-import { createViemWalletClient } from "../../utils/createViemWalletClient";
+import { Address } from 'viem';
+import { ToolConfig } from '../allTools';
+import { BEND_ABI } from '../../constants/bendABI';
+import { CONTRACT } from '../../constants/index';
+import { createViemWalletClient } from '../../utils/createViemWalletClient';
 import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
-} from "../../utils/helpers";
-import { log } from "../../utils/logger";
+} from '../../utils/helpers';
+import { log } from '../../utils/logger';
 
 interface BendRepayArgs {
   asset: Address;
@@ -17,34 +17,34 @@ interface BendRepayArgs {
 
 export const bendRepayTool: ToolConfig<BendRepayArgs> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "bend_repay",
-      description: "Repay borrowed tokens to Bend Protocol",
+      name: 'bend_repay',
+      description: 'Repay borrowed tokens to Bend Protocol',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           asset: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Token address to repay",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'Token address to repay',
           },
           amount: {
-            type: "number",
-            description: "The amount of tokens to repay",
+            type: 'number',
+            description: 'The amount of tokens to repay',
           },
           interestRateMode: {
-            type: "number",
+            type: 'number',
             enum: [1, 2],
-            description: "Interest rate mode (1 for stable, 2 for variable)",
+            description: 'Interest rate mode (1 for stable, 2 for variable)',
             default: 2,
           },
         },
-        required: ["asset", "amount"],
+        required: ['asset', 'amount'],
       },
     },
   },
-  handler: async (args) => {
+  handler: async args => {
     try {
       const walletClient = createViemWalletClient();
       const onBehalfOf = walletClient.account.address;
@@ -69,7 +69,7 @@ export const bendRepayTool: ToolConfig<BendRepayArgs> = {
       const hash = await walletClient.writeContract({
         address: CONTRACT.Bend,
         abi: BEND_ABI,
-        functionName: "repay",
+        functionName: 'repay',
         args: [args.asset, parsedAmount, interestRateMode, onBehalfOf],
       });
 
