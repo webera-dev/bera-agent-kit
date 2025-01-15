@@ -21,7 +21,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: yarn ci
+        run: yarn
 
       - name: Run linting and formatting
         run: |
