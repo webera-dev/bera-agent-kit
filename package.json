@@ -81,6 +81,7 @@
     "@langchain/community": "^0.3.22",
     "@langchain/core": "^0.3.27",
     "@langchain/langgraph": "^0.2.39",
+    "@langchain/openai": "^0.3.17",
     "@playwright/test": "^1.42.1",
     "axios": "^1.7.9",
     "chai": "^4.3.7",

@@ -909,6 +909,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@langchain/openai@npm:^0.3.17":
+  version: 0.3.17
+  resolution: "@langchain/openai@npm:0.3.17"
+  dependencies:
+    js-tiktoken: ^1.0.12
+    openai: ^4.77.0
+    zod: ^3.22.4
+    zod-to-json-schema: ^3.22.3
+  peerDependencies:
+    "@langchain/core": ">=0.3.29 <0.4.0"
+  checksum: af88894dcfa8381c0b0df924e085796995f5d5ba2a2657ea72b4181b35c5d92b0040c5cf305378c1f48a8f1f04d4a3b0b29ba1d84f80cedf5dab8bc46d7d5c6c
+  languageName: node
+  linkType: hard
+
 "@langchain/textsplitters@npm:>=0.0.0 <0.2.0":
   version: 0.1.0
   resolution: "@langchain/textsplitters@npm:0.1.0"
@@ -2336,6 +2350,7 @@ __metadata:
     "@langchain/community": ^0.3.22
     "@langchain/core": ^0.3.27
     "@langchain/langgraph": ^0.2.39
+    "@langchain/openai": ^0.3.17
     "@playwright/test": ^1.42.1
     "@semantic-release/changelog": ^6.0.3
     "@semantic-release/git": ^10.0.1
