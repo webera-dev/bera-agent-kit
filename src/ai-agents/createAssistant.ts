@@ -1,8 +1,8 @@
-import OpenAI from "openai";
-import { Assistant } from "openai/resources/beta/assistants";
-import { createTools } from "../tools/allTools";
-import { promts } from "../constants/promts";
-import { WalletClient } from "viem";
+import OpenAI from 'openai';
+import { Assistant } from 'openai/resources/beta/assistants';
+import { createTools } from '../tools/allTools';
+import { promts } from '../constants/promts';
+import { WalletClient } from 'viem';
 
 /**
  * This function creates an assistant using OpenAI's Beta Assistants API
@@ -17,10 +17,10 @@ export async function createAssistant(
   const tools = createTools(walletClient);
 
   return await client.beta.assistants.create({
-    model: "gpt-4o-mini",
+    model: 'gpt-4o-mini',
     temperature: 0.3,
-    name: "My Assistant",
+    name: 'My Assistant',
     instructions: promts,
-    tools: Object.values(tools).map((tool) => tool.definition),
+    tools: Object.values(tools).map(tool => tool.definition),
   });
 }

@@ -1,14 +1,14 @@
-import axios from "axios";
-import { Address, parseUnits } from "viem";
-import { ToolConfig } from "../allTools";
-import { BeraCrocMultiSwapABI } from "../../constants/bexABI";
-import { CONTRACT, TOKEN, URL } from "../../constants";
-import { createViemWalletClient } from "../../utils/createViemWalletClient";
+import axios from 'axios';
+import { Address, parseUnits } from 'viem';
+import { ToolConfig } from '../allTools';
+import { BeraCrocMultiSwapABI } from '../../constants/bexABI';
+import { CONTRACT, TOKEN, URL } from '../../constants';
+import { createViemWalletClient } from '../../utils/createViemWalletClient';
 import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
-} from "../../utils/helpers";
-import { log } from "../../utils/logger";
+} from '../../utils/helpers';
+import { log } from '../../utils/logger';
 
 interface BexSwapArgs {
   base: Address;
@@ -18,33 +18,33 @@ interface BexSwapArgs {
 
 export const bexSwapTool: ToolConfig<BexSwapArgs> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "bex_swap",
-      description: "Perform a token swap on BEX",
+      name: 'bex_swap',
+      description: 'Perform a token swap on BEX',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           base: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Base token address",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'Base token address',
           },
           quote: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Quote token address",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'Quote token address',
           },
           amount: {
-            type: "number",
-            description: "The amount of swap tokens",
+            type: 'number',
+            description: 'The amount of swap tokens',
           },
         },
-        required: ["base", "quote", "amount"],
+        required: ['base', 'quote', 'amount'],
       },
     },
   },
-  handler: async (args) => {
+  handler: async args => {
     // TODO: Detect the "native token" automatically so that users do not need to provide the BERA address.
     try {
       const walletClient = createViemWalletClient();
@@ -91,7 +91,7 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
       const tx = await walletClient.writeContract({
         address: CONTRACT.BeraCrocMultiSwap,
         abi: BeraCrocMultiSwapABI,
-        functionName: "multiSwap",
+        functionName: 'multiSwap',
         args: [steps, parsedAmount, parsedMinOut],
         value: steps.some((step: any) => step.base === TOKEN.WBERA)
           ? parsedAmount
@@ -102,7 +102,7 @@ export const bexSwapTool: ToolConfig<BexSwapArgs> = {
         hash: tx as `0x${string}`,
       });
 
-      if (receipt.status !== "success") {
+      if (receipt.status !== 'success') {
         throw new Error(
           `Swap transaction failed with status: ${receipt.status}`,
         );

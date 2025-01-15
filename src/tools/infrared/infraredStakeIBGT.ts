@@ -1,12 +1,12 @@
-import { Address, parseUnits } from "viem";
-import { ToolConfig } from "../allTools";
-import { CONTRACT, TOKEN } from "../../constants/index";
-import { createViemWalletClient } from "../../utils/createViemWalletClient";
+import { Address, parseUnits } from 'viem';
+import { ToolConfig } from '../allTools';
+import { CONTRACT, TOKEN } from '../../constants/index';
+import { createViemWalletClient } from '../../utils/createViemWalletClient';
 import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
-} from "../../utils/helpers";
-import { InfraredVaultABI } from "../../constants/infraredABI";
+} from '../../utils/helpers';
+import { InfraredVaultABI } from '../../constants/infraredABI';
 
 interface InfraredStakeIBGTArgs {
   stakeAmount: number;
@@ -14,19 +14,19 @@ interface InfraredStakeIBGTArgs {
 
 export const infraredStakeIBGTTool: ToolConfig<InfraredStakeIBGTArgs> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "infrared_stake_ibgt",
-      description: "Stake iBGT on Infrared",
+      name: 'infrared_stake_ibgt',
+      description: 'Stake iBGT on Infrared',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           stakeAmount: {
-            type: "number",
-            description: "The amount of iBGT to stake",
+            type: 'number',
+            description: 'The amount of iBGT to stake',
           },
         },
-        required: ["stakeAmount"],
+        required: ['stakeAmount'],
       },
     },
   },
@@ -59,7 +59,7 @@ export const infraredStakeIBGTTool: ToolConfig<InfraredStakeIBGTArgs> = {
       const tx = await walletClient.writeContract({
         address: infraredIBGTVaultAddress,
         abi: InfraredVaultABI,
-        functionName: "stake",
+        functionName: 'stake',
         args: [parsedStakeAmount],
       });
 
@@ -67,7 +67,7 @@ export const infraredStakeIBGTTool: ToolConfig<InfraredStakeIBGTArgs> = {
         hash: tx as `0x${string}`,
       });
 
-      if (receipt.status !== "success") {
+      if (receipt.status !== 'success') {
         throw new Error(
           `Stake transaction failed with status: ${receipt.status}`,
         );

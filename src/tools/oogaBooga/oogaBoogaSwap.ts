@@ -1,10 +1,10 @@
-import axios from "axios";
-import { Address, WalletClient } from "viem";
-import { ToolConfig } from "../allTools";
+import axios from 'axios';
+import { Address, WalletClient } from 'viem';
+import { ToolConfig } from '../allTools';
 // import { createViemWalletClient } from "../../utils/createViemWalletClient";
-import { URL } from "../../constants";
-import { fetchTokenDecimalsAndParseAmount } from "../../utils/helpers";
-import { log } from "../../utils/logger";
+import { URL } from '../../constants';
+import { fetchTokenDecimalsAndParseAmount } from '../../utils/helpers';
+import { log } from '../../utils/logger';
 
 interface OogaBoogaSwapArgs {
   base: Address; // Token to swap from
@@ -55,8 +55,8 @@ const checkAndApproveAllowance = async (
     const receipt = await walletClient.waitForTransactionReceipt({ hash });
 
     log.info(`[DEBUG] Approval Receipt:`, receipt);
-    if (receipt.status !== "success") {
-      throw new Error("Approval transaction failed");
+    if (receipt.status !== 'success') {
+      throw new Error('Approval transaction failed');
     }
     log.info(
       `[INFO] Approval complete: ${receipt.transactionHash} ${receipt.status}`,
@@ -88,7 +88,7 @@ const performSwap = async (
     });
     const { tx: swapTx } = swapResponse.data;
 
-    log.info("Submitting swap transaction...");
+    log.info('Submitting swap transaction...');
     log.info(`[DEBUG] swap transaction params:`);
     const swapHash = await walletClient.sendTransaction({
       account: walletClient.account.address,
@@ -117,43 +117,43 @@ const performSwap = async (
 // Main tool handler
 export const oogaBoogaSwapTool: ToolConfig<OogaBoogaSwapArgs> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "ooga_booga_swap",
-      description: "Perform a token swap using the OogaBooga API",
+      name: 'ooga_booga_swap',
+      description: 'Perform a token swap using the OogaBooga API',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           base: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Base token address (token to swap from)",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'Base token address (token to swap from)',
           },
           quote: {
-            type: "string",
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "Quote token address (token to swap to)",
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'Quote token address (token to swap to)',
           },
           amount: {
-            type: "number",
-            description: "The amount of tokens to swap",
+            type: 'number',
+            description: 'The amount of tokens to swap',
           },
           slippage: {
-            type: "number",
-            description: "The allowed slippage tolerance (0.01 = 1%)",
+            type: 'number',
+            description: 'The allowed slippage tolerance (0.01 = 1%)',
           },
         },
-        required: ["base", "quote", "amount"],
+        required: ['base', 'quote', 'amount'],
       },
     },
   },
   handler: async (args, walletClient?: WalletClient) => {
     if (!process.env.OOGA_BOOGA_API_KEY) {
-      throw new Error("OOGA_BOOGA_API_KEY is required.");
+      throw new Error('OOGA_BOOGA_API_KEY is required.');
     }
 
     if (!walletClient || !walletClient.account) {
-      throw new Error("Wallet client is not provided");
+      throw new Error('Wallet client is not provided');
     }
 
     const OOGA_BOOGA_API_KEY = process.env.OOGA_BOOGA_API_KEY;

@@ -1,8 +1,8 @@
-import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
-import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { ToolConfig } from "../allTools";
-import { gpt4o } from "../../utils/model";
-import { log } from "../../utils/logger";
+import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
+import { createReactAgent } from '@langchain/langgraph/prebuilt';
+import { ToolConfig } from '../allTools';
+import { gpt4o } from '../../utils/model';
+import { log } from '../../utils/logger';
 
 // Initialize tools array
 const searchTools = [];
@@ -19,25 +19,25 @@ const generalAgent = createReactAgent({
 
 export const liveSearchTool: ToolConfig<{ query: string }> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "liveSearch",
-      description: "Searches live data",
+      name: 'liveSearch',
+      description: 'Searches live data',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
-          query: { type: "string" },
+          query: { type: 'string' },
         },
-        required: ["query"],
+        required: ['query'],
       },
     },
   },
   handler: async (args: { query: string }) => {
     const { query } = args;
     try {
-    //   console.log("Sending request to Tavily API with query:", query);
+      //   console.log("Sending request to Tavily API with query:", query);
       const results = await generalAgent.invoke({
-        messages: [{ role: "user", content: query }],
+        messages: [{ role: 'user', content: query }],
       });
       // log.info(`Received response from Tavily API:`, results);
 
@@ -54,14 +54,14 @@ export const liveSearchTool: ToolConfig<{ query: string }> = {
       const toolMessage: SearchResultMessage | undefined = (
         results as GeneralAgentResult
       )?.messages?.find(
-        (msg: SearchResultMessage) => msg.name === "tavily_search_results_json",
+        (msg: SearchResultMessage) => msg.name === 'tavily_search_results_json',
       );
       const responseContent =
-        toolMessage?.content || "No relevant information found.";
+        toolMessage?.content || 'No relevant information found.';
 
       return responseContent;
     } catch (error) {
-      log.error("Error fetching search results:", error);
+      log.error('Error fetching search results:', error);
       throw error;
     }
   },

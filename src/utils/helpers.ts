@@ -1,8 +1,8 @@
-import { Address, formatUnits, parseUnits } from "viem";
-import { TokenABI } from "../constants/tokenABI";
-import axios from "axios";
-import { TOKEN, URL } from "../constants";
-import { log } from "./logger";
+import { Address, formatUnits, parseUnits } from 'viem';
+import { TokenABI } from '../constants/tokenABI';
+import axios from 'axios';
+import { TOKEN, URL } from '../constants';
+import { log } from './logger';
 
 const tokenDecimalsCache: Map<string, number> = new Map();
 
@@ -16,7 +16,7 @@ export const fetchTokenDecimals = async (
       const tokenDecimals = await walletClient.readContract({
         address: token,
         abi: TokenABI,
-        functionName: "decimals",
+        functionName: 'decimals',
         args: [],
       });
       tokenDecimalsCache.set(token, Number(tokenDecimals));
@@ -66,7 +66,7 @@ export const checkAndApproveAllowance = async (
   const allowance = await walletClient.readContract({
     address: token,
     abi: TokenABI,
-    functionName: "allowance",
+    functionName: 'allowance',
     args: [walletClient.account.address, spender],
   });
 
@@ -79,7 +79,7 @@ export const checkAndApproveAllowance = async (
     const approvalTx = await walletClient.writeContract({
       address: token,
       abi: TokenABI,
-      functionName: "approve",
+      functionName: 'approve',
       args: [spender, amount],
     });
 
@@ -87,8 +87,8 @@ export const checkAndApproveAllowance = async (
       hash: approvalTx as `0x${string}`,
     });
 
-    if (approvalReceipt.status !== "success") {
-      throw new Error("Approval transaction failed");
+    if (approvalReceipt.status !== 'success') {
+      throw new Error('Approval transaction failed');
     }
 
     log.info(`[INFO] Approval successful`);
@@ -125,7 +125,7 @@ export const fetchVaultAndTokenAddress = async (
     }
 
     throw new Error(
-      `No matching ${isVault ? "staking token" : "vault"} address found for ${token}`,
+      `No matching ${isVault ? 'staking token' : 'vault'} address found for ${token}`,
     );
   } catch (error: any) {
     log.error(`[ERROR] Failed to fetch addresses: ${error.message}`);

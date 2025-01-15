@@ -1,13 +1,13 @@
-import { Address, parseUnits } from "viem";
-import { ToolConfig } from "../allTools";
-import { createViemWalletClient } from "../../utils/createViemWalletClient";
+import { Address, parseUnits } from 'viem';
+import { ToolConfig } from '../allTools';
+import { createViemWalletClient } from '../../utils/createViemWalletClient';
 import {
   checkAndApproveAllowance,
   fetchTokenDecimalsAndParseAmount,
   fetchVaultAndTokenAddress,
-} from "../../utils/helpers";
-import { BerachainRewardsVaultABI } from "../../constants/bgtStationABI";
-import { log } from "../../utils/logger";
+} from '../../utils/helpers';
+import { BerachainRewardsVaultABI } from '../../constants/bgtStationABI';
+import { log } from '../../utils/logger';
 
 interface BGTStationStakeArgs {
   token?: Address;
@@ -17,37 +17,37 @@ interface BGTStationStakeArgs {
 
 export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
   definition: {
-    type: "function",
+    type: 'function',
     function: {
-      name: "bgt_station_stake",
-      description: "Stake tokens into a vault in the BGT Station",
+      name: 'bgt_station_stake',
+      description: 'Stake tokens into a vault in the BGT Station',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           token: {
-            type: ["string", "null"],
-            pattern: "^0x[a-fA-F0-9]{40}$",
+            type: ['string', 'null'],
+            pattern: '^0x[a-fA-F0-9]{40}$',
             description:
-              "The staking token address. If null, vault must be provided.",
+              'The staking token address. If null, vault must be provided.',
           },
           vault: {
-            type: ["string", "null"],
-            pattern: "^0x[a-fA-F0-9]{40}$",
-            description: "The vault address. If null, token must be provided.",
+            type: ['string', 'null'],
+            pattern: '^0x[a-fA-F0-9]{40}$',
+            description: 'The vault address. If null, token must be provided.',
           },
           amount: {
-            type: "number",
-            description: "The human-readable amount of tokens to stake.",
+            type: 'number',
+            description: 'The human-readable amount of tokens to stake.',
           },
         },
-        required: ["amount"],
+        required: ['amount'],
       },
     },
   },
-  handler: async (args) => {
+  handler: async args => {
     try {
       if (!args.token && !args.vault) {
-        throw new Error("Either token or vault address must be provided.");
+        throw new Error('Either token or vault address must be provided.');
       }
 
       const walletClient = createViemWalletClient();
@@ -55,7 +55,7 @@ export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
       const primaryAddress = args.token || args.vault;
       const isVault = !!args.vault;
 
-      log.info("[INFO] Detecting vault or token address...");
+      log.info('[INFO] Detecting vault or token address...');
       const { vaultAddress, stakingTokenAddress } =
         await fetchVaultAndTokenAddress(primaryAddress!, isVault);
       log.info(`[INFO] Resolved Vault Address: ${vaultAddress}`);
@@ -67,7 +67,7 @@ export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
         args.amount,
       );
 
-      log.info("[INFO] Checking allowance...");
+      log.info('[INFO] Checking allowance...');
       await checkAndApproveAllowance(
         walletClient,
         stakingTokenAddress,
@@ -76,11 +76,11 @@ export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
       );
 
       // Stake the token into the vault
-      log.info("[INFO] Staking token into vault...");
+      log.info('[INFO] Staking token into vault...');
       const stakeTx = await walletClient.writeContract({
         address: vaultAddress,
         abi: BerachainRewardsVaultABI,
-        functionName: "stake",
+        functionName: 'stake',
         args: [parsedAmount],
       });
 
@@ -88,8 +88,8 @@ export const bgtStationStakeTool: ToolConfig<BGTStationStakeArgs> = {
         hash: stakeTx as `0x${string}`,
       });
 
-      if (stakeReceipt.status !== "success") {
-        throw new Error("Stake transaction failed.");
+      if (stakeReceipt.status !== 'success') {
+        throw new Error('Stake transaction failed.');
       }
 
       log.info(

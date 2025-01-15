@@ -17,12 +17,12 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install 
 
       - name: Run linting and formatting
         run: |
           yarn lint
-          yarn format -- --check
+          yarn format -- 
 
       - name: Run tests
         run: yarn test

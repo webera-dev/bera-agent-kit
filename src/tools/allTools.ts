@@ -1,30 +1,30 @@
-import { WalletClient } from "viem";
-import { getBalanceTool } from "./common/getBalance";
-import { transferTool } from "./common/transfer";
-import { kodiakSwapTool } from "./kodiak/kodiakSwap";
-import { bexSwapTool } from "./bex/bexSwap";
-import { oogaBoogaSwapTool } from "./oogaBooga/oogaBoogaSwap";
-import { bgtStationStakeTool } from "./bgtStation/bgtStationStake";
-import { bgtStationClaimRewardTool } from "./bgtStation/bgtStationClaimBGT";
-import { infraredStakeIBGTTool } from "./infrared/infraredStakeIBGT";
-import { getTokenBalanceTool } from "./common/getTokenBalance";
-import { infraredWithdrawStakedIBGTTool } from "./infrared/infraredWithdrawStakedIBGT";
-import { bendSupplyTool } from "./bend/bendSupply";
-import { bendWithdrawTool } from "./bend/bendWithdraw";
-import { bendBorrowTool } from "./bend/bendBorrow";
-import { bendRepayTool } from "./bend/bendRepay";
-import { bgtStationDelegateTool } from "./bgtStation/bgtStationDelegateBGT";
-import { bgtStationRedeemTool } from "./bgtStation/bgtStationRedeem";
-import { liveSearchTool } from "./tavilySearch/liveSearch";
+import { WalletClient } from 'viem';
+import { getBalanceTool } from './common/getBalance';
+import { transferTool } from './common/transfer';
+import { kodiakSwapTool } from './kodiak/kodiakSwap';
+import { bexSwapTool } from './bex/bexSwap';
+import { oogaBoogaSwapTool } from './oogaBooga/oogaBoogaSwap';
+import { bgtStationStakeTool } from './bgtStation/bgtStationStake';
+import { bgtStationClaimRewardTool } from './bgtStation/bgtStationClaimBGT';
+import { infraredStakeIBGTTool } from './infrared/infraredStakeIBGT';
+import { getTokenBalanceTool } from './common/getTokenBalance';
+import { infraredWithdrawStakedIBGTTool } from './infrared/infraredWithdrawStakedIBGT';
+import { bendSupplyTool } from './bend/bendSupply';
+import { bendWithdrawTool } from './bend/bendWithdraw';
+import { bendBorrowTool } from './bend/bendBorrow';
+import { bendRepayTool } from './bend/bendRepay';
+import { bgtStationDelegateTool } from './bgtStation/bgtStationDelegateBGT';
+import { bgtStationRedeemTool } from './bgtStation/bgtStationRedeem';
+import { liveSearchTool } from './tavilySearch/liveSearch';
 
 export interface ToolConfig<T = any, W = WalletClient> {
   definition: {
-    type: "function";
+    type: 'function';
     function: {
       name: string;
       description: string;
       parameters: {
-        type: "object";
+        type: 'object';
         properties: Record<string, unknown>;
         required: string[];
       };

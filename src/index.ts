@@ -1,17 +1,17 @@
 // Main exports
-import "dotenv/config";
-import OpenAI, { ClientOptions } from "openai";
-import { Thread } from "openai/resources/beta/threads";
-import { Assistant } from "openai/resources/beta/assistants";
-import { WalletClient } from "viem";
+import 'dotenv/config';
+import OpenAI, { ClientOptions } from 'openai';
+import { Thread } from 'openai/resources/beta/threads';
+import { Assistant } from 'openai/resources/beta/assistants';
+import { WalletClient } from 'viem';
 
 // Agent-related imports
-import { createAssistant } from "./ai-agents/createAssistant";
-import { createThread } from "./ai-agents/createThread";
-import { createRun } from "./ai-agents/createRun";
-import { performRun } from "./ai-agents/performRun";
-import { log } from "./utils/logger";
-import { createViemWalletClient } from "./utils/createViemWalletClient";
+import { createAssistant } from './ai-agents/createAssistant';
+import { createThread } from './ai-agents/createThread';
+import { createRun } from './ai-agents/createRun';
+import { performRun } from './ai-agents/performRun';
+import { log } from './utils/logger';
+import { createViemWalletClient } from './utils/createViemWalletClient';
 
 export interface BeraAgentConfig {
   walletClient: WalletClient;
@@ -42,13 +42,13 @@ export class BeraAgent {
 
   async sendMessage(message: string): Promise<string> {
     if (!this.assistant || !this.thread) {
-      throw new Error("BeraAgent not initialized. Call initialize() first.");
+      throw new Error('BeraAgent not initialized. Call initialize() first.');
     }
     log.info(
       `Sending message: ${message} for wallet ${this.walletClient.account?.address}`,
     );
     await this.openAIClient.beta.threads.messages.create(this.thread.id, {
-      role: "user",
+      role: 'user',
       content: message,
     });
 
@@ -64,11 +64,11 @@ export class BeraAgent {
       this.walletClient,
     );
 
-    if (result?.type === "text") {
+    if (result?.type === 'text') {
       return result.text.value;
     }
 
-    throw new Error("Unexpected response format");
+    throw new Error('Unexpected response format');
   }
 
   getAssistant(): Assistant | null {
@@ -85,19 +85,19 @@ export class BeraAgent {
 }
 
 // Utility exports
-export { createViemWalletClient } from "./utils/createViemWalletClient";
-export { createViemPublicClient } from "./utils/createViemPublicClient";
-export { log } from "./utils/logger";
+export { createViemWalletClient } from './utils/createViemWalletClient';
+export { createViemPublicClient } from './utils/createViemPublicClient';
+export { log } from './utils/logger';
 
 // Tool exports
-export { createTools } from "./tools/allTools";
+export { createTools } from './tools/allTools';
 
 // Agent-related exports
-export { createAssistant } from "./ai-agents/createAssistant";
-export { createThread } from "./ai-agents/createThread";
-export { createRun } from "./ai-agents/createRun";
-export { performRun } from "./ai-agents/performRun";
+export { createAssistant } from './ai-agents/createAssistant';
+export { createThread } from './ai-agents/createThread';
+export { createRun } from './ai-agents/createRun';
+export { performRun } from './ai-agents/performRun';
 
 // Constants and types
-export * from "./constants";
-export * from "./tools/allTools";
+export * from './constants';
+export * from './tools/allTools';
