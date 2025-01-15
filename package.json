@@ -41,7 +41,7 @@
     "examples"
   ],
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "repository": {
     "type": "git",
@@ -81,6 +81,7 @@
     "@langchain/community": "^0.3.22",
     "@langchain/core": "^0.3.27",
     "@langchain/langgraph": "^0.2.39",
+    "@langchain/openai": "^0.3.17",
     "@playwright/test": "^1.42.1",
     "axios": "^1.7.9",
     "chai": "^4.3.7",
@@ -98,6 +99,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",
@@ -106,6 +109,7 @@
     "@typescript-eslint/parser": "^8.19.0",
     "eslint": "^8.56.0",
     "prettier": "^3.2.5",
+    "semantic-release": "^23.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   }
