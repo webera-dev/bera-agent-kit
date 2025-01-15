@@ -1,6 +1,6 @@
 {
   "name": "bera-agent-kit",
-  "version": "0.0.2",
+  "version": "0.0.10",
   "description": "Open-source agent kit for interacting with Berachain protocols",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -100,6 +100,7 @@
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.10",
