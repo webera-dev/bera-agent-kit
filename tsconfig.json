@@ -38,5 +38,11 @@
     "**/*.test.ts", 
     "**/*.spec.ts", 
     "examples"
-  ]
+  ],
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
 }

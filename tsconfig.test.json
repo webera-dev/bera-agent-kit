@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["mocha", "chai", "node"],
+    "module": "ESNext",
+    "moduleResolution": "node"
+  },
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
+} 
