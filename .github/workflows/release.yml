@@ -21,18 +21,19 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install 
 
-      - name: Run linting and formatting
-        run: |
-          yarn lint
-          yarn format
+      - name: Run linting
+        run: yarn lint || exit 1
+
+      - name: Run formatting check
+        run: yarn format --check || exit 1
 
       - name: Run tests
-        run: yarn test
+        run: yarn test || exit 1
 
       - name: Build SDK
-        run: yarn build
+        run: yarn build || exit 1
 
       - name: Create release branch
         run: |
