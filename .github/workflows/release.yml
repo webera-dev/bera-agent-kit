@@ -23,7 +23,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: yarn install 
+        run: yarn install --frozen-lockfile
 
       - name: Run linting
         run: yarn lint
@@ -41,10 +41,13 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # Create and switch to a new branch based on the tag
-          git checkout -b releases
-          # Add dist directory
-          git add dist -f
+          # Create a clean releases branch
+          git checkout --orphan releases
+          # Remove everything
+          git rm -rf .
+          # Add only dist directory
+          cp -r dist/* .
+          git add .
           # Create commit
           git commit -m "Release ${{ github.ref_name }}"
           # Force push to releases branch
