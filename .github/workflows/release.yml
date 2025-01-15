@@ -12,11 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -25,24 +28,30 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install 
 
       - name: Run linting
-        run: yarn lint
+        run: yarn lint 
 
       - name: Run formatting check
-        run: yarn format --check
+        run: yarn format --check 
 
       - name: Run tests
-        run: yarn test
+        run: yarn test 
+
+      - name: Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
 
       - name: Build SDK
-        run: yarn build
-      
-      - name: Deploy to GitHub Pages
+        run: yarn build 
+
+      - name: Deploy Code 
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          publish_branch: gh-pages
+          publish_branch: releases
           force_orphan: true

@@ -98,6 +98,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",
@@ -106,6 +108,7 @@
     "@typescript-eslint/parser": "^8.19.0",
     "eslint": "^8.56.0",
     "prettier": "^3.2.5",
+    "semantic-release": "^23.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   }
