@@ -45,8 +45,8 @@ jobs:
           ssh-private-key: ${{ secrets.GH_TOKEN }}
 
       - name: Semantic Release
-        # env:
-          # GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         #   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: | 
           git remote set-url origin git@github.com:Webera-Finance/bera-agent-kit.git
