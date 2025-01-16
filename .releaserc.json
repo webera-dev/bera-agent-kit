@@ -23,5 +23,9 @@
         "assets": [{ "path": "dist/**", "label": "Distribution" }]
       }
     ]
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Webera-Finance/bera-agent-kit.git"
+  }
 }
