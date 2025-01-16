@@ -2,36 +2,36 @@
   "name": "bera-agent-kit",
   "version": "0.0.10",
   "description": "Open-source agent kit for interacting with Berachain protocols",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "module": "index.mjs",
+  "types": "index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "default": "./dist/index.js"
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "require": "./index.js",
+      "default": "./index.js"
     },
     "./package.json": "./package.json",
     "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.mjs",
-      "require": "./dist/utils/index.js"
+      "types": "./utils/index.d.ts",
+      "import": "./utils/index.mjs",
+      "require": "./utils/index.js"
     },
     "./utils/createViemWalletClient": {
-      "types": "./dist/utils/createViemWalletClient.d.ts",
-      "import": "./dist/utils/createViemWalletClient.mjs",
-      "require": "./dist/utils/createViemWalletClient.js"
+      "types": "./utils/createViemWalletClient.d.ts",
+      "import": "./utils/createViemWalletClient.mjs",
+      "require": "./utils/createViemWalletClient.js"
     },
     "./tools": {
-      "types": "./dist/tools/index.d.ts",
-      "import": "./dist/tools/index.mjs",
-      "require": "./dist/tools/index.js"
+      "types": "./tools/index.d.ts",
+      "import": "./tools/index.mjs",
+      "require": "./tools/index.js"
     },
     "./ai-agents": {
-      "types": "./dist/ai-agents/index.d.ts",
-      "import": "./dist/ai-agents/index.mjs",
-      "require": "./dist/ai-agents/index.js"
+      "types": "./ai-agents/index.d.ts",
+      "import": "./ai-agents/index.mjs",
+      "require": "./ai-agents/index.js"
     }
   },
   "files": [
@@ -73,7 +73,8 @@
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "example": "ts-node examples/basic-usage.ts"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^1.0.0",
