@@ -1,6 +1,6 @@
 {
   "name": "bera-agent-kit",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Open-source agent kit for interacting with Berachain protocols",
   "main": "index.js",
   "module": "index.mjs",
