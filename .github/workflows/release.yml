@@ -50,7 +50,8 @@ jobs:
         #   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: | 
           git remote set-url origin git@github.com:Webera-Finance/bera-agent-kit.git
-          npx semantic-release
+          npx semantic-release -r git@github.com:Webera-Finance/bera-agent-kit.git
+
 
       - name: Build SDK
         run: yarn build 
