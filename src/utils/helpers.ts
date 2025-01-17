@@ -11,7 +11,7 @@ export const fetchTokenDecimals = async (
   token: Address,
 ): Promise<number> => {
   if (!tokenDecimalsCache.has(token)) {
-    if (token !== TOKEN.BERA) {
+    if (token) {
       log.info(`[INFO] Fetching token decimals for ${token}`);
       const tokenDecimals = await walletClient.readContract({
         address: token,
