@@ -5,6 +5,13 @@
 
 * update prompt clarify default token mapping and native token details ([6de194b](https://github.com/Webera-Finance/bera-agent-kit/commit/6de194bf3499345bdd9574c585b35f6101bd3dfa))
 
+# [0.1.0](https://github.com/Webera-Finance/bera-agent-kit/compare/v0.0.10...v0.1.0) (2025-01-17)
+
+
+### Features
+
+* update prompt clarify default token mapping and native token details ([6de194b](https://github.com/Webera-Finance/bera-agent-kit/commit/6de194bf3499345bdd9574c585b35f6101bd3dfa))
+
 ## [0.0.10](https://github.com/Webera-Finance/bera-agent-kit/compare/v0.0.9...v0.0.10) (2025-01-17)
 
 
