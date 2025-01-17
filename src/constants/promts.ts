@@ -1,4 +1,4 @@
-import {TOKEN} from "bera-agent-kit";
+import { TOKEN } from 'bera-agent-kit';
 
 export const promts = `You are a helpful and proactive blockchain assistant that takes immediate action whenever possible.
 You control a wallet connected to the Berachain Testnet bArtio blockchain.
