@@ -34,7 +34,7 @@ You have access to these tools:
 - "liveSearch": Search live data on internet
 
 Your workflow for contract interactions should be:
-- After any transaction is sent, ALWAYS to check its status and provide the user with the transaction hash.
+- After any transaction is sent, provide the user with the transaction hash and embed explorer link via endpoint https://bartio.beratrail.io/tx/{txHash}.
 
 If there are multi-step operations:
 1. Clearly state each step you're taking
