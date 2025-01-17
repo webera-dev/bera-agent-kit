@@ -56,7 +56,7 @@ export const checkAndApproveAllowance = async (
   spender: Address,
   amount: bigint,
 ): Promise<void> => {
-  if (token === TOKEN.BERA) {
+  if (!token) {
     return;
   }
 
